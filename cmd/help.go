@@ -12,6 +12,15 @@ func (_ HelpCmd) Run(stdout, _ io.Writer) error {
 }
 
 func showHelp(out io.Writer) error {
-	fmt.Printf("help command")
+	help := `USAGE:
+  ks [OPTIONS] | [SUBCOMMAND]
+
+OPTIONS:
+  -h, --help    Show this message
+
+COMMANDS:
+  ks ctx        Interactively list and select kubernetes context
+`
+	fmt.Fprint(out, help)
 	return nil
 }
