@@ -1,2 +1,2 @@
-# kubesnap
-improved kubernetes context management tool
+# kubesnap: Improved kubernetes context management tool
+
