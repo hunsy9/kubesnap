@@ -7,11 +7,11 @@ import (
 
 type HelpCmd struct{}
 
-func (_ HelpCmd) Run(stdout, _ io.Writer) error {
+func (HelpCmd) Run(stdout, _ io.Writer) error {
 	return showHelp(stdout)
 }
 
-func showHelp(out io.Writer) error {
+func showHelp(stdout io.Writer) error {
 	help := `USAGE:
   ks [OPTIONS] | [SUBCOMMAND]
 
@@ -21,6 +21,6 @@ OPTIONS:
 COMMANDS:
   ks ctx        Interactively list and select kubernetes context
 `
-	fmt.Fprint(out, help)
+	fmt.Fprint(stdout, help)
 	return nil
 }
