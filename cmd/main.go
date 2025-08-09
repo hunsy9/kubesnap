@@ -1,10 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"os"
-
-	"github.com/fatih/color"
 )
 
 type Cmd interface {
@@ -13,7 +12,7 @@ type Cmd interface {
 
 func main() {
 	cmd := parseCmd(os.Args[1:])
-	if err := cmd.Run(color.Output, color.Error); err != nil {
-		color.Red("Error: %v", err)
+	if err := cmd.Run(os.Stdout, os.Stderr); err != nil {
+		fmt.Printf("Error: %v\n", err)
 	}
 }
