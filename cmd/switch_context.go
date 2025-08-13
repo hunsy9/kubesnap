@@ -1,14 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"os"
-	"os/exec"
 
-	"github.com/hunsy9/kubesnap/internal/constant"
-	"github.com/hunsy9/kubesnap/internal/envutil"
-	"github.com/hunsy9/kubesnap/internal/yamlutil"
-	"github.com/manifoldco/promptui"
+	"github.com/charmbracelet/bubbles/list"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/hunsy9/kubesnap/pkg/constant"
+	"github.com/hunsy9/kubesnap/pkg/envutil"
+	"github.com/hunsy9/kubesnap/pkg/model"
+	"github.com/hunsy9/kubesnap/pkg/yamlutil"
 	"github.com/pkg/errors"
 )
 
@@ -41,24 +43,23 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 		return errors.Wrap(err, "failed to parse yaml")
 	}
 
-	clusterNameList := make([]string, len(unMarshalTarget.Contexts))
-	for i, ctx := range unMarshalTarget.Contexts {
-		clusterNameList[i] = ctx.Name
+	if len(unMarshalTarget.Contexts) == 0 {
+		return errors.New("no contexts found")
 	}
 
-	prompt := promptui.Select{
-		Label: "Select Context",
-		Items: clusterNameList,
-		Size:  50,
+	items := []list.Item{}
+
+	for _, ctx := range unMarshalTarget.Contexts {
+		items = append(items, model.Item(ctx.Name))
 	}
 
-	_, result, err := prompt.Run()
+	md := model.NewUIModel(items, "Select a Context")
+	p := tea.NewProgram(md, tea.WithAltScreen())
 
-	if err != nil {
-		return errors.Wrap(err, "Prompt failed")
+	if _, err := p.Run(); err != nil {
+		fmt.Println("Error running program:", err)
+		os.Exit(1)
 	}
-
-	exec.Command("kubectl", "config", "use-context", result).Run()
 
 	return nil
 }
