@@ -1,11 +1,14 @@
 package model
 
 import (
+	"fmt"
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/hunsy9/kubesnap/pkg/constant"
+	"os"
+	"os/exec"
 )
 
 var (
@@ -42,4 +45,45 @@ func NewUIModel(items []list.Item, title string) *UIModel {
 
 func (m UIModel) Init() tea.Cmd {
 	return nil
+}
+
+func (m UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.list.SetWidth(msg.Width)
+		return m, nil
+
+	case tea.KeyMsg:
+		switch keypress := msg.String(); keypress {
+		case "q", "ctrl+c":
+			m.quitting = true
+			return m, tea.Quit
+
+		case "enter":
+			i, ok := m.list.SelectedItem().(Item)
+			if ok {
+				m.choice = string(i)
+			}
+
+			err := exec.Command("kubectl", "config", "use-context", m.choice).Run()
+
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error switching context: %v\n", err)
+				return m, tea.Quit
+			}
+
+			return m, tea.Quit
+		}
+	}
+
+	var cmd tea.Cmd
+	m.list, cmd = m.list.Update(msg)
+	return m, cmd
+}
+
+func (m UIModel) View() string {
+	if m.quitting {
+		return quitTextStyle.Render("Changed Context")
+	}
+	return "\n" + m.list.View()
 }
