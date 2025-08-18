@@ -14,20 +14,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-type Clusters struct {
-	Contexts []ContextInfo `yaml:"contexts"`
-}
-
-type ContextInfo struct {
-	Context Context `yaml:"context"`
-	Name    string  `yaml:"name"`
-}
-
-type Context struct {
-	Cluster string `yaml:"cluster"`
-	User    string `yaml:"user"`
-}
-
 type SwitchContextCmd struct{}
 
 func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
@@ -35,7 +21,7 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 	kubeConfigPath := os.Getenv("HOME") + constant.DefaultKubeConfigLocation
 	filepath := envutil.GetEnvOrDefault("KUBECONFIG", kubeConfigPath)
 
-	var unMarshalTarget Clusters
+	var unMarshalTarget model.Kubeconfig
 
 	yamlContext := yamlutil.NewParsingContext(filepath, &unMarshalTarget)
 	err := yamlutil.ParseYaml(yamlContext)
