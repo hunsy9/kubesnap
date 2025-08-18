@@ -19,7 +19,7 @@ func ParseYaml(parsingContext *ParsingContext) error {
 	parseError := yaml.Unmarshal(data, parsingContext.ParsedObject)
 
 	if parseError != nil {
-		return errors.Wrap(err, "unmarshaling yaml file failed")
+		return errors.Wrap(parseError, "unmarshaling yaml file failed")
 	}
 
 	return nil
