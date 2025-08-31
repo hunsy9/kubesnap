@@ -19,7 +19,7 @@ OPTIONS:
   -h, --help    Show this message
 
 COMMANDS:
-  ks ctx        Interactively list and select kubernetes context
+  ks        Interactively list and select kubernetes context
 `
 	fmt.Fprint(stdout, help)
 	return nil
