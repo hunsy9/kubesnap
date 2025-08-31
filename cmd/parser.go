@@ -14,12 +14,13 @@ func (cmd ErrorCmd) Run(_, _ io.Writer) error {
 
 func parseCmd(argv []string) Cmd {
 
+	// feature: switching context and routing command
 	if len(argv) == 0 {
-		return InfoCmd{}
+		return SwitchContextCmd{}
 	}
 
-	if argv[0] == "ctx" {
-		return SwitchContextCmd{}
+	if argv[0] == "info" {
+		return InfoCmd{}
 	}
 
 	if argv[0] == "-h" || argv[0] == "--help" {
