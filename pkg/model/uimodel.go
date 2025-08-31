@@ -2,29 +2,40 @@ package model
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
+
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/hunsy9/kubesnap/pkg/constant"
-	"os"
-	"os/exec"
 )
 
+type kubectlResult struct {
+	err error
+}
+
+func (m *UIModel) executeKubectl() tea.Cmd {
+	return func() tea.Msg {
+		exec_err := exec.Command("kubectl", "config", "use-context", m.choice).Run()
+		return kubectlResult{err: exec_err}
+	}
+}
+
 var (
-	titleStyle        = lipgloss.NewStyle().MarginLeft(2).Background(lipgloss.Color("173"))
+	titleStyle        = lipgloss.NewStyle().MarginLeft(2).Background(lipgloss.Color(constant.DefaultThemeColor))
 	itemStyle         = lipgloss.NewStyle().PaddingLeft(4)
-	selectedItemStyle = lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color("173"))
+	selectedItemStyle = lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color(constant.DefaultThemeColor))
 	paginationStyle   = list.DefaultStyles().PaginationStyle.PaddingLeft(4)
 	helpStyle         = list.DefaultStyles().HelpStyle.PaddingLeft(4).PaddingBottom(1)
-	quitTextStyle     = lipgloss.NewStyle().Margin(1, 0, 2, 4)
 )
 
 type UIModel struct {
-	spinner  spinner.Model
-	list     list.Model
-	choice   string
-	quitting bool
+	spinner   spinner.Model
+	list      list.Model
+	choice    string
+	switching bool
 }
 
 func NewUIModel(items []list.Item, title string) *UIModel {
@@ -36,9 +47,11 @@ func NewUIModel(items []list.Item, title string) *UIModel {
 	l.Styles.Title = titleStyle
 	l.Styles.PaginationStyle = paginationStyle
 	l.Styles.HelpStyle = helpStyle
+	l.Styles.FilterPrompt = helpStyle
 
 	sp := spinner.New()
-	sp.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("206"))
+	sp.Spinner = spinner.Dot
+	sp.Style = lipgloss.NewStyle().Foreground(lipgloss.Color(constant.DefaultThemeColor))
 
 	return &UIModel{spinner: sp, list: l}
 }
@@ -56,7 +69,6 @@ func (m UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
 		case "q", "ctrl+c":
-			m.quitting = true
 			return m, tea.Quit
 
 		case "enter":
@@ -65,25 +77,34 @@ func (m UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.choice = string(i)
 			}
 
-			err := exec.Command("kubectl", "config", "use-context", m.choice).Run()
-
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "Error switching context: %v\n", err)
-				return m, tea.Quit
-			}
-
+			m.switching = true
+			return m, tea.Batch(m.spinner.Tick, m.executeKubectl())
+		}
+	case kubectlResult:
+		m.switching = false
+		if msg.err != nil {
+			fmt.Fprintf(os.Stderr, "Error switching context: %v\n", msg.err)
 			return m, tea.Quit
 		}
+		return m, tea.Quit
+	case tea.QuitMsg:
+		return m, tea.Quit
 	}
 
 	var cmd tea.Cmd
+	if m.switching {
+		m.spinner, cmd = m.spinner.Update(msg)
+		return m, cmd
+	}
+
 	m.list, cmd = m.list.Update(msg)
 	return m, cmd
 }
 
 func (m UIModel) View() string {
-	if m.quitting {
-		return quitTextStyle.Render("Changed Context")
+	if m.switching {
+		return fmt.Sprintf("%s Switching Context to %s...", m.spinner.View(), m.choice)
 	}
-	return "\n" + m.list.View()
+
+	return m.list.View()
 }
