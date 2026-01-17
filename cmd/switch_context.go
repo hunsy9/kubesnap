@@ -7,9 +7,11 @@ import (
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/hunsy9/kubesnap/pkg/constant"
 	"github.com/hunsy9/kubesnap/pkg/envutil"
 	"github.com/hunsy9/kubesnap/pkg/model"
+	switchcontextlistmodel "github.com/hunsy9/kubesnap/pkg/model/switchcontextlist"
 	"github.com/hunsy9/kubesnap/pkg/yamlutil"
 	"github.com/pkg/errors"
 )
@@ -18,10 +20,14 @@ type SwitchContextCmd struct{}
 
 func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 
+	// get kubeconfig path
+
 	kubeConfigPath := os.Getenv("HOME") + constant.DefaultKubeConfigLocation
 	filepath := envutil.GetEnvOrDefault("KUBECONFIG", kubeConfigPath)
 
-	var unMarshalTarget model.Kubeconfig
+	// transform kubeconfig file to Kubeconfig model
+
+	var unMarshalTarget model.KubeConfig
 
 	yamlContext := yamlutil.NewParsingContext(filepath, &unMarshalTarget)
 	err := yamlutil.ParseYaml(yamlContext)
@@ -33,13 +39,22 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 		return errors.New("no contexts found")
 	}
 
+	// if there is contexts in kubeconfig file, push it to switchcontextlistmodel's Item list
+
 	items := []list.Item{}
+	currentContextMarker := lipgloss.NewStyle().Foreground(lipgloss.Color("#15FF00")).Bold(true).Render(" ✓ current-context")
+	items = append(items, switchcontextlistmodel.Item(unMarshalTarget.CurrentContext+currentContextMarker)) // push current context first
 
 	for _, ctx := range unMarshalTarget.Contexts {
-		items = append(items, model.Item(ctx.Name))
+		if unMarshalTarget.CurrentContext == ctx.Name {
+			continue
+		}
+		items = append(items, switchcontextlistmodel.Item(ctx.Name))
 	}
 
-	md := model.NewUIModel(items, "Select a Context")
+	// create new bubbletea program with bunch of contexts
+
+	md := switchcontextlistmodel.NewUIModel(items, constant.DefaultSwitchingContextHeaderMessage)
 	p := tea.NewProgram(md, tea.WithAltScreen())
 
 	if _, err := p.Run(); err != nil {
