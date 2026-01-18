@@ -2,8 +2,8 @@ package constant
 
 const (
 	// UI Message
-	DefaultSwitchingContextHeaderMessage   string = "[Select a Context]"
-	DefaultSwitchingNamespaceHeaderMessage string = "[Select a Namespace]"
+	DefaultSwitchingContextHeaderMessage   string = "Kubesnap: Context Switcher"
+	DefaultSwitchingNamespaceHeaderMessage string = "Kubesnap: Namespace Switcher"
 	CurrentContextMarker                   string = " ✓ current-context"
 	CurrentNamespaceMarker                 string = " ✓ current-namespace"
 	Context                                string = "context"
