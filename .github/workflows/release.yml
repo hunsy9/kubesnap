@@ -45,7 +45,7 @@ jobs:
           echo "Version: ${{ needs.check-release-branch.outputs.version }}"
       - name: Create Release
         if: needs.check-release-branch.outputs.version != ''
-        uses: actions/create-release@v2
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
         with:
