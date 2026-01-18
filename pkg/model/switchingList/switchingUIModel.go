@@ -3,7 +3,6 @@ package model
 import (
 	"fmt"
 	"os"
-	"os/exec"
 
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
@@ -12,35 +11,32 @@ import (
 	"github.com/hunsy9/kubesnap/pkg/constant"
 )
 
-type kubectlResult struct {
-	err error
-}
-
-// TODO: modify kubeconfig file's current-context area instead of using kubectl
-func (m *UIModel) executeKubectl() tea.Cmd {
-	return func() tea.Msg {
-		exec_err := exec.Command("kubectl", "config", "use-context", m.choice).Run()
-		return kubectlResult{err: exec_err}
-	}
-}
-
 var (
 	titleStyle        = lipgloss.NewStyle().MarginLeft(2).Bold(false).Foreground(lipgloss.Color(constant.DefaultThemeColor))
 	itemStyle         = lipgloss.NewStyle().PaddingLeft(4)
 	selectedItemStyle = lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color(constant.DefaultThemeColor))
 	paginationStyle   = list.DefaultStyles().PaginationStyle.PaddingLeft(4)
 	helpStyle         = list.DefaultStyles().HelpStyle.PaddingLeft(4).PaddingBottom(3)
+	spinnerStyle      = lipgloss.NewStyle().Foreground(lipgloss.Color(constant.DefaultThemeColor))
 )
 
-type UIModel struct {
-	spinner   spinner.Model // spinner model
-	list      list.Model    // list model
-	choice    string        // target kubernetes cluster which user selected
-	switching bool          // variable which shows state of changing context
-	output    string        // success output message for context switching
+type OperationResultMsg struct {
+	Err error
 }
 
-func NewUIModel(items []list.Item, title string) *UIModel {
+type SwitchingOperation func(param string) tea.Cmd // switching function executed by UIModel
+
+type UIModel struct {
+	spinner   spinner.Model      // spinner model
+	list      list.Model         // list model
+	tag       string             // operation tag
+	choice    string             // target kubernetes cluster which user selected
+	switching bool               // variable which shows state of changing context/namespace
+	operation SwitchingOperation // switching function executed by UIModel
+	output    string             // success output message for context switching
+}
+
+func NewUIModel(items []list.Item, title string, tag string) *UIModel {
 
 	l := list.New(items, ItemDelegate{}, constant.DefaultWidth, constant.ListHeight)
 
@@ -56,9 +52,9 @@ func NewUIModel(items []list.Item, title string) *UIModel {
 
 	sp := spinner.New()
 	sp.Spinner = spinner.Dot
-	sp.Style = lipgloss.NewStyle().Foreground(lipgloss.Color(constant.DefaultThemeColor))
+	sp.Style = spinnerStyle
 
-	return &UIModel{spinner: sp, list: l}
+	return &UIModel{spinner: sp, list: l, tag: tag}
 }
 
 func (m *UIModel) Init() tea.Cmd {
@@ -83,15 +79,15 @@ func (m *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			m.switching = true
-			return m, tea.Batch(m.spinner.Tick, m.executeKubectl())
+			return m, tea.Batch(m.spinner.Tick, m.operation(m.choice))
 		}
-	case kubectlResult:
+	case OperationResultMsg:
 		m.switching = false
-		if msg.err != nil {
-			fmt.Fprintf(os.Stderr, "Error switching context: %v\n", msg.err)
+		if msg.Err != nil {
+			fmt.Fprintf(os.Stderr, "Error switching %s: %v\n", m.tag, msg.Err)
 			return m, tea.Quit
 		}
-		m.output = fmt.Sprintf("Switched to context: %s\n", m.choice)
+		m.output = fmt.Sprintf("Switched to %s: %s\n", m.tag, m.choice)
 		return m, tea.Quit
 	case tea.QuitMsg:
 		return m, tea.Quit
@@ -109,10 +105,14 @@ func (m *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m *UIModel) View() string {
 	if m.switching {
-		switchingMsg := fmt.Sprintf("%s Switching Context to %s...", m.spinner.View(), m.choice)
+		switchingMsg := fmt.Sprintf("%s Switching %s to %s...", m.spinner.View(), m.tag, m.choice)
 		m.list.Title = switchingMsg
 	}
 	return m.list.View()
+}
+
+func (m *UIModel) SetOperationFunc(operation SwitchingOperation) {
+	m.operation = operation
 }
 
 func (m *UIModel) GetOutput() string {
