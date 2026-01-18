@@ -1,1 +1,1 @@
-go build -o kubesnap ./cmd
+go build -o ks ./cmd
