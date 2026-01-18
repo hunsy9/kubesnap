@@ -2,10 +2,11 @@ package model
 
 import (
 	"fmt"
-	"github.com/charmbracelet/bubbles/list"
-	tea "github.com/charmbracelet/bubbletea"
 	"io"
 	"strings"
+
+	"github.com/charmbracelet/bubbles/list"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 type Item string
@@ -28,7 +29,7 @@ func (d ItemDelegate) Render(w io.Writer, m list.Model, index int, listItem list
 	fn := itemStyle.Render
 	if index == m.Index() {
 		fn = func(s ...string) string {
-			return selectedItemStyle.Render("> " + strings.Join(s, " "))
+			return selectedItemStyle.Render("• " + strings.Join(s, " "))
 		}
 	}
 

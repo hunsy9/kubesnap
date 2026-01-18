@@ -1,1 +1,1 @@
-cd ./cmd && go build .
+go build -o ks ./cmd

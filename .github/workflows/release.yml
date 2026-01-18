@@ -1,0 +1,81 @@
+name: Release and Deploy
+
+on:
+  push:
+    paths-ignore:
+      - "test/**"
+    branches: [main]
+  workflow_dispatch:
+    
+jobs:
+  check-release-branch:
+    runs-on: ubuntu-latest
+    outputs:
+      is_release: ${{ steps.check_branch.outputs.is_release }}
+      version: ${{ steps.extract_version.outputs.version }}
+    steps:
+      - name: Check if merged from release branch
+        id: check_branch
+        run: |
+          commit_message="${{ github.event.head_commit.message }}"
+          if [[ "$commit_message" =~ ^Merge\ pull\ request.*from.*release- ]]; then
+            echo "is_release=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_release=false" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      - name: Extract version from merge commit message
+        if: steps.check_branch.outputs.is_release == 'true'
+        id: extract_version
+        run: |
+          VERSION=$(echo "${{ github.event.head_commit.message }}" | grep -oP 'release-\K[0-9]+\.[0-9]+\.[0-9]+')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+    
+  create-release:
+    needs: check-release-branch
+    if: needs.check-release-branch.outputs.is_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+      - name: Debug Info
+        run: |
+          echo "Is Release: ${{ needs.check-release-branch.outputs.is_release }}"
+          echo "Version: ${{ needs.check-release-branch.outputs.version }}"
+      - name: Create Release
+        if: needs.check-release-branch.outputs.version != ''
+        uses: actions/create-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
+        with:
+          tag_name: ${{ needs.check-release-branch.outputs.version }}
+          release_name: Release ${{ needs.check-release-branch.outputs.version }}
+          draft: false
+          prerelease: false
+
+  exec-goreleaser:
+    needs: check-release-branch
+    if: needs.check-release-branch.outputs.is_release == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: '~> v2'
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
+        
+
