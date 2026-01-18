@@ -26,6 +26,7 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 	filepath := envutil.GetEnvOrDefault("KUBECONFIG", kubeConfigPath)
 
 	// transform kubeconfig file to Kubeconfig model
+	// TODO: use client-go functions instead of using yamlutil
 
 	var unMarshalTarget model.KubeConfig
 
