@@ -25,7 +25,7 @@ func (m *UIModel) executeKubectl() tea.Cmd {
 }
 
 var (
-	titleStyle        = lipgloss.NewStyle().MarginLeft(2).Bold(true).Foreground(lipgloss.Color(constant.DefaultThemeColor))
+	titleStyle        = lipgloss.NewStyle().MarginLeft(2).Bold(false).Foreground(lipgloss.Color(constant.DefaultThemeColor))
 	itemStyle         = lipgloss.NewStyle().PaddingLeft(4)
 	selectedItemStyle = lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color(constant.DefaultThemeColor))
 	paginationStyle   = list.DefaultStyles().PaginationStyle.PaddingLeft(4)
@@ -37,6 +37,7 @@ type UIModel struct {
 	list      list.Model    // list model
 	choice    string        // target kubernetes cluster which user selected
 	switching bool          // variable which shows state of changing context
+	output    string        // success output message for context switching
 }
 
 func NewUIModel(items []list.Item, title string) *UIModel {
@@ -60,11 +61,11 @@ func NewUIModel(items []list.Item, title string) *UIModel {
 	return &UIModel{spinner: sp, list: l}
 }
 
-func (m UIModel) Init() tea.Cmd {
+func (m *UIModel) Init() tea.Cmd {
 	return nil
 }
 
-func (m UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.list.SetWidth(msg.Width)
@@ -90,6 +91,7 @@ func (m UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			fmt.Fprintf(os.Stderr, "Error switching context: %v\n", msg.err)
 			return m, tea.Quit
 		}
+		m.output = fmt.Sprintf("Switched to context: %s\n", m.choice)
 		return m, tea.Quit
 	case tea.QuitMsg:
 		return m, tea.Quit
@@ -105,10 +107,14 @@ func (m UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m UIModel) View() string {
+func (m *UIModel) View() string {
 	if m.switching {
 		switchingMsg := fmt.Sprintf("%s Switching Context to %s...", m.spinner.View(), m.choice)
 		m.list.Title = switchingMsg
 	}
 	return m.list.View()
+}
+
+func (m *UIModel) GetOutput() string {
+	return m.output
 }

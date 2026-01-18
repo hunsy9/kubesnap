@@ -42,7 +42,7 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 	// if there is contexts in kubeconfig file, push it to switchcontextlistmodel's Item list
 
 	items := []list.Item{}
-	currentContextMarker := lipgloss.NewStyle().Foreground(lipgloss.Color("#15FF00")).Bold(true).Render(" ✓ current-context")
+	currentContextMarker := lipgloss.NewStyle().Foreground(lipgloss.Color(constant.CurrentContextMarkerColor)).Bold(true).Render(constant.CurrentContextMarker)
 	items = append(items, switchcontextlistmodel.Item(unMarshalTarget.CurrentContext+currentContextMarker)) // push current context first
 
 	for _, ctx := range unMarshalTarget.Contexts {
@@ -57,9 +57,18 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 	md := switchcontextlistmodel.NewUIModel(items, constant.DefaultSwitchingContextHeaderMessage)
 	p := tea.NewProgram(md, tea.WithAltScreen())
 
-	if _, err := p.Run(); err != nil {
+	finalModel, err := p.Run()
+	if err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
+	}
+
+	//
+
+	if uiModel, ok := finalModel.(*switchcontextlistmodel.UIModel); ok {
+		if output := uiModel.GetOutput(); output != "" {
+			fmt.Print(output)
+		}
 	}
 
 	return nil
