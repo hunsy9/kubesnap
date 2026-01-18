@@ -13,13 +13,15 @@ func (HelpCmd) Run(stdout, _ io.Writer) error {
 
 func showHelp(stdout io.Writer) error {
 	help := `USAGE:
-  ks [OPTIONS] | [SUBCOMMAND]
+  ks [SUBCOMMAND] | [OPTIONS]
 
 OPTIONS:
   -h, --help    Show this message
 
 COMMANDS:
-  ks        Interactively list and select kubernetes context
+  ks		Show current cluster/namespace detail
+  ks ctx        Interactively list and select kubernetes context
+  ks ns         Interactively list and select kubernetes namespace
 `
 	fmt.Fprint(stdout, help)
 	return nil
