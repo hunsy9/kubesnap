@@ -52,3 +52,16 @@ release:
     ---
 
     Released by [GoReleaser](https://github.com/goreleaser/goreleaser).
+
+brews:
+  - repository:
+      owner: hunsy9
+      name: homebrew-kubesnap
+
+      token: "{{.Env.GITHUB_TOKEN}}"
+    name: kubesnap
+    homepage: "https://github.com/hunsy9/homebrew-kubesnap"
+    description: "Improved kubernetes context management tool"
+    license: "MIT"
+    install: |
+      bin.install "ks"
