@@ -48,7 +48,7 @@ func (_ SwitchNamespaceCmd) Run(stdout, _ io.Writer) error {
 	// if there is current-context's namespace in kubeconfig file, push it to switchinglistmodel's Item list first
 
 	items := []list.Item{}
-	currentNamespace := getCurrentNamespace()
+	currentNamespace := GetCurrentNamespace()
 	currentNamespaceMarker := lipgloss.NewStyle().Foreground(lipgloss.Color(constant.CurrentNamespaceMarkerColor)).Bold(true).Render(constant.CurrentNamespaceMarker)
 
 	items = append(items, slm.Item(currentNamespace+currentNamespaceMarker)) // push current namespace first
@@ -95,7 +95,7 @@ func getClientSet(kubeconfigPath string) (*kubernetes.Clientset, error) {
 	return clientset, nil
 }
 
-func getCurrentNamespace() string {
+func GetCurrentNamespace() string {
 	config, err := clientcmd.LoadFromFile(clientcmd.RecommendedHomeFile)
 	if err != nil {
 		panic(err.Error())
