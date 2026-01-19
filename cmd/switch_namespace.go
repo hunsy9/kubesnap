@@ -24,6 +24,8 @@ import (
 
 type SwitchNamespaceCmd struct{}
 
+type SwitchToDefaultNamespaceCmd struct{}
+
 func (_ SwitchNamespaceCmd) Run(stdout, _ io.Writer) error {
 
 	// get kubeconfig path
@@ -63,7 +65,7 @@ func (_ SwitchNamespaceCmd) Run(stdout, _ io.Writer) error {
 	// create new bubbletea program with bunch of namespaces
 
 	md := slm.NewUIModel(items, constant.DefaultSwitchingNamespaceHeaderMessage, constant.Namespace)
-	md.SetOperationFunc(SwitchNamespace)
+	md.SetOperationFunc(SwitchNamespaceForTea)
 	p := tea.NewProgram(md, tea.WithAltScreen())
 
 	finalModel, err := p.Run()
@@ -78,6 +80,23 @@ func (_ SwitchNamespaceCmd) Run(stdout, _ io.Writer) error {
 		}
 	}
 
+	return nil
+}
+
+func (_ SwitchToDefaultNamespaceCmd) Run(stdout, _ io.Writer) error {
+
+	currentNamespace := GetCurrentNamespace()
+	if currentNamespace == constant.DefaultNamespace {
+		return errors.New("You are already in the default namespace")
+	}
+
+	// TODO: modify kubeconfig file's current-context's namespace area instead of using kubectl
+	exec_err := exec.Command("kubectl", "config", "set-context", "--current", "--namespace="+constant.DefaultNamespace).Run()
+	if exec_err != nil {
+		return errors.Wrap(exec_err, "Failed to switch namespace to default")
+	}
+
+	fmt.Println("Namespace switched to default")
 	return nil
 }
 
@@ -108,11 +127,11 @@ func GetCurrentNamespace() string {
 		}
 	}
 
-	return "default"
+	return constant.DefaultNamespace
 }
 
 // TODO: modify kubeconfig file's current-context's namespace area instead of using kubectl
-func SwitchNamespace(namespaceName string) tea.Cmd {
+func SwitchNamespaceForTea(namespaceName string) tea.Cmd {
 	return func() tea.Msg {
 		exec_err := exec.Command("kubectl", "config", "set-context", "--current", "--namespace="+namespaceName).Run()
 		return slm.OperationResultMsg{Err: exec_err}
