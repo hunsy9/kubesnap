@@ -8,6 +8,7 @@ const (
 	CurrentNamespaceMarker                 string = " ✓ current-namespace"
 	Context                                string = "context"
 	Namespace                              string = "namespace"
+	DefaultNamespace                       string = "default"
 
 	// UI Configuration
 	DefaultWidth                int    = 10
