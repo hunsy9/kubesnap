@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"os"
 
 	"github.com/pkg/errors"
 )
@@ -24,6 +25,12 @@ func parseCmd(argv []string) Cmd {
 	}
 
 	if argv[0] == "ns" {
+		if len(argv) > 1 {
+			homeDir, err := os.UserHomeDir()
+			if err == nil && argv[1] == homeDir {
+				return SwitchToDefaultNamespaceCmd{}
+			}
+		}
 		return SwitchNamespaceCmd{}
 	}
 

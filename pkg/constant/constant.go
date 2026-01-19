@@ -8,11 +8,12 @@ const (
 	CurrentNamespaceMarker                 string = " ✓ current-namespace"
 	Context                                string = "context"
 	Namespace                              string = "namespace"
+	DefaultNamespace                       string = "default"
 
 	// UI Configuration
 	DefaultWidth                int    = 10
 	ListHeight                  int    = 15
-	DefaultThemeColor           string = "#8b11f5ff"
+	DefaultThemeColor           string = "#4777BA"
 	CurrentContextMarkerColor   string = "#10bb00"
 	CurrentNamespaceMarkerColor string = "#10bb00"
 

@@ -19,9 +19,15 @@ OPTIONS:
   -h, --help    Show this message
 
 COMMANDS:
+  // General Command
   ks		Show current cluster/namespace detail
-  ks ctx        Interactively list and select kubernetes context
-  ks ns         Interactively list and select kubernetes namespace
+  
+  // Context Command
+  ks ctx        Open Context Switcher
+
+  // Namespace Command
+  ks ns         Open Namespace Switcher
+  ks ns -       Switch to Default Namespace
 `
 	fmt.Fprint(stdout, help)
 	return nil
