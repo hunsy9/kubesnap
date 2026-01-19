@@ -1,9 +1,9 @@
-<img width="300" src="./assets/kubesnap_logo.svg"/>
+<img width="400" src="./assets/kubesnap_logo.svg"/>
 
 ###  kubesnap: Improved kubernetes context management tool
 > kubesnap is a powerful CLI tool that provides fast switching between cluster contexts/namespaces and offers robust functionality for managing kubeconfig contexts in an extremely easy way.
 
-<img width="450" src="./assets/kubesnap.gif" />
+<img width="750" src="./assets/kubesnap.gif" />
 
 ## Installation
 ### Pre-requisites before installation
