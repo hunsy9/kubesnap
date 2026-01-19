@@ -24,6 +24,9 @@ func parseCmd(argv []string) Cmd {
 	}
 
 	if argv[0] == "ns" {
+		if len(argv) > 1 && argv[1] == "-" {
+			return SwitchToDefaultNamespaceCmd{}
+		}
 		return SwitchNamespaceCmd{}
 	}
 
