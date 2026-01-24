@@ -9,7 +9,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/hunsy9/kubesnap/pkg/constant"
+	c "github.com/hunsy9/kubesnap/pkg/constant"
 	"github.com/hunsy9/kubesnap/pkg/envutil"
 	"github.com/hunsy9/kubesnap/pkg/model"
 	slm "github.com/hunsy9/kubesnap/pkg/model/switchingList"
@@ -23,7 +23,7 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 
 	// get kubeconfig path
 
-	kubeConfigPath := os.Getenv("HOME") + constant.DefaultKubeConfigLocation
+	kubeConfigPath := os.Getenv("HOME") + c.DefaultKubeConfigLocation
 	filepath := envutil.GetEnvOrDefault("KUBECONFIG", kubeConfigPath)
 
 	// transform kubeconfig file to Kubeconfig model
@@ -44,7 +44,7 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 	// if there is contexts in kubeconfig file, push it to switchinglistmodel's Item list first
 
 	items := []list.Item{}
-	currentContextMarker := lipgloss.NewStyle().Foreground(lipgloss.Color(constant.CurrentContextMarkerColor)).Bold(true).Render(constant.CurrentContextMarker)
+	currentContextMarker := lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultActiveColor)).Bold(true).Render(c.CurrentContextMarker)
 	items = append(items, slm.Item(unMarshalTarget.CurrentContext+currentContextMarker)) // push current context first
 
 	for _, ctx := range unMarshalTarget.Contexts {
@@ -56,7 +56,7 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 
 	// create new bubbletea program with bunch of contexts
 
-	md := slm.NewUIModel(items, constant.DefaultSwitchingContextHeaderMessage, constant.Context)
+	md := slm.NewUIModel(items, c.DefaultSwitchingContextHeaderMessage, c.Context)
 	md.SetOperationFunc(SwitchContext)
 	p := tea.NewProgram(md, tea.WithAltScreen())
 

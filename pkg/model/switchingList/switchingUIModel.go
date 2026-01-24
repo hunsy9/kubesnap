@@ -1,4 +1,4 @@
-package model
+package switchingList
 
 import (
 	"fmt"
@@ -7,17 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/hunsy9/kubesnap/pkg/constant"
-)
-
-var (
-	titleStyle        = lipgloss.NewStyle().MarginTop(1).MarginLeft(2).Bold(true).Italic(true).Foreground(lipgloss.Color(constant.DefaultThemeColor))
-	itemStyle         = lipgloss.NewStyle().PaddingLeft(4)
-	selectedItemStyle = lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color(constant.DefaultThemeColor))
-	paginationStyle   = list.DefaultStyles().PaginationStyle.PaddingLeft(4)
-	helpStyle         = list.DefaultStyles().HelpStyle.PaddingLeft(4).PaddingBottom(3)
-	spinnerStyle      = lipgloss.NewStyle().Foreground(lipgloss.Color(constant.DefaultThemeColor))
 )
 
 type OperationResultMsg struct {
@@ -108,7 +98,8 @@ func (m *UIModel) View() string {
 		switchingMsg := fmt.Sprintf("%s Switching %s to %s...", m.spinner.View(), m.tag, m.choice)
 		m.list.Title = switchingMsg
 	}
-	return m.list.View()
+
+	return boxStyle.Render(m.list.View())
 }
 
 func (m *UIModel) SetOperationFunc(operation SwitchingOperation) {

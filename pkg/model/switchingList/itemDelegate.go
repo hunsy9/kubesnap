@@ -1,4 +1,4 @@
-package model
+package switchingList
 
 import (
 	"fmt"
