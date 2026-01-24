@@ -13,7 +13,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/hunsy9/kubesnap/pkg/constant"
+	c "github.com/hunsy9/kubesnap/pkg/constant"
 	"github.com/hunsy9/kubesnap/pkg/envutil"
 	slm "github.com/hunsy9/kubesnap/pkg/model/switchingList"
 	"k8s.io/client-go/kubernetes"
@@ -30,7 +30,7 @@ func (_ SwitchNamespaceCmd) Run(stdout, _ io.Writer) error {
 
 	// get kubeconfig path
 
-	kubeConfigPath := os.Getenv("HOME") + constant.DefaultKubeConfigLocation
+	kubeConfigPath := os.Getenv("HOME") + c.DefaultKubeConfigLocation
 	filepath := envutil.GetEnvOrDefault("KUBECONFIG", kubeConfigPath)
 
 	// get the clientset of current context
@@ -51,7 +51,7 @@ func (_ SwitchNamespaceCmd) Run(stdout, _ io.Writer) error {
 
 	items := []list.Item{}
 	currentNamespace := GetCurrentNamespace()
-	currentNamespaceMarker := lipgloss.NewStyle().Foreground(lipgloss.Color(constant.CurrentNamespaceMarkerColor)).Bold(true).Render(constant.CurrentNamespaceMarker)
+	currentNamespaceMarker := lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultActiveColor)).Bold(true).Render(c.CurrentNamespaceMarker)
 
 	items = append(items, slm.Item(currentNamespace+currentNamespaceMarker)) // push current namespace first
 
@@ -64,7 +64,7 @@ func (_ SwitchNamespaceCmd) Run(stdout, _ io.Writer) error {
 
 	// create new bubbletea program with bunch of namespaces
 
-	md := slm.NewUIModel(items, constant.DefaultSwitchingNamespaceHeaderMessage, constant.Namespace)
+	md := slm.NewUIModel(items, c.DefaultSwitchingNamespaceHeaderMessage, c.Namespace)
 	md.SetOperationFunc(SwitchNamespaceForTea)
 	p := tea.NewProgram(md, tea.WithAltScreen())
 
@@ -86,12 +86,12 @@ func (_ SwitchNamespaceCmd) Run(stdout, _ io.Writer) error {
 func (_ SwitchToDefaultNamespaceCmd) Run(stdout, _ io.Writer) error {
 
 	currentNamespace := GetCurrentNamespace()
-	if currentNamespace == constant.DefaultNamespace {
+	if currentNamespace == c.DefaultNamespace {
 		return errors.New("You are already in the default namespace")
 	}
 
 	// TODO: modify kubeconfig file's current-context's namespace area instead of using kubectl
-	exec_err := exec.Command("kubectl", "config", "set-context", "--current", "--namespace="+constant.DefaultNamespace).Run()
+	exec_err := exec.Command("kubectl", "config", "set-context", "--current", "--namespace="+c.DefaultNamespace).Run()
 	if exec_err != nil {
 		return errors.Wrap(exec_err, "Failed to switch namespace to default")
 	}
@@ -127,7 +127,7 @@ func GetCurrentNamespace() string {
 		}
 	}
 
-	return constant.DefaultNamespace
+	return c.DefaultNamespace
 }
 
 // TODO: modify kubeconfig file's current-context's namespace area instead of using kubectl
