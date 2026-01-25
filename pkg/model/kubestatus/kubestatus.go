@@ -3,6 +3,7 @@ package kubestatus
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/charmbracelet/bubbles/spinner"
@@ -24,12 +25,32 @@ type AuthInfoMsg struct {
 }
 
 func (m *StatusModel) checkApiHealth() tea.Msg {
+
+	var statusCode int
 	start := time.Now()
-	_, err := m.clientSet.Discovery().RESTClient().Get().AbsPath("/healthz").DoRaw(context.TODO())
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.clientSet.Discovery().RESTClient().
+		Get().
+		AbsPath("/healthz").
+		Do(ctx).
+		StatusCode(&statusCode).
+		Error()
 	elapsed := time.Since(start).Milliseconds()
+
 	if err != nil {
+		var statusText string
+		if ctx.Err() == context.DeadlineExceeded {
+			statusText = "Network Timeout"
+		} else if statusCode == 0 {
+			statusText = "Network Unreachable"
+		} else {
+			statusText = http.StatusText(statusCode)
+		}
 		return ApiHealthMsg{
-			Msg: errorStyle.Render(fmt.Sprintf("● InActive (%s)", err.Error())),
+			Msg: errorStyle.Render(fmt.Sprintf("● InActive (%v)", statusText)),
 		}
 	}
 
@@ -40,8 +61,12 @@ func (m *StatusModel) checkApiHealth() tea.Msg {
 }
 
 func (m *StatusModel) getAuthInfo() tea.Msg {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
 	ssr := &authenticationv1.SelfSubjectReview{}
-	result, err := m.clientSet.AuthenticationV1().SelfSubjectReviews().Create(context.TODO(), ssr, metav1.CreateOptions{})
+	result, err := m.clientSet.AuthenticationV1().SelfSubjectReviews().Create(ctx, ssr, metav1.CreateOptions{})
 
 	if err != nil {
 		return AuthInfoMsg{
@@ -133,8 +158,8 @@ func (m *StatusModel) View() string {
 		userView = fmt.Sprintf("%v", m.auth.Status.UserInfo.Username)
 		groupView = fmt.Sprintf("%v", m.auth.Status.UserInfo.Groups)
 	} else {
-		userView = iconStyle.Render("-")
-		groupView = iconStyle.Render("-")
+		userView = iconStyle.Bold(true).Render("-")
+		groupView = iconStyle.Bold(true).Render("-")
 	}
 
 	clusterConnection := fmt.Sprintf(" %s Cluster: %s\n %s API Server: %s\n    └─ Status: %s\n",
