@@ -14,10 +14,11 @@ const (
 	Bullet                                 string = "✓"
 
 	// Color Configuration
-	DefaultThemeColor  string = "#4777BA"
-	DefaultActiveColor string = "#00d919"
-	DefaultUrlColor    string = "#626262"
-	DefaultErrorColor  string = "#d90808"
+	DefaultThemeColor   string = "#4777BA"
+	DefaultActiveColor  string = "#00d919"
+	DefaultWarningColor string = "#f1c40f"
+	DefaultUrlColor     string = "#626262"
+	DefaultErrorColor   string = "#d90808"
 
 	// File Paths
 	DefaultKubeConfigLocation string = "/.kube/config"
