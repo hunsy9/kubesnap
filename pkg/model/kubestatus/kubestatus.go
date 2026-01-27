@@ -245,6 +245,8 @@ type StatusModel struct {
 	isNodeLoading   bool
 	isPodLoading    bool
 	isEventLoading  bool
+	totalAsyncTasks int
+	completedTasks  int
 }
 
 func NewStatusModel(clientSet *kubernetes.Clientset, clusterName string, namespace string, endpoint string) *StatusModel {
@@ -262,6 +264,7 @@ func NewStatusModel(clientSet *kubernetes.Clientset, clusterName string, namespa
 		isNodeLoading:   true,
 		isPodLoading:    true,
 		isEventLoading:  true,
+		totalAsyncTasks: 5,
 	}
 }
 
@@ -293,6 +296,7 @@ func (m *StatusModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case ApiHealthMsg:
 		m.apiStatus = msg.Msg
 		m.isHealthLoading = false
+		cmds = append(cmds, m.incrementProgress())
 
 	case AuthInfoMsg:
 		if msg.Err == nil {
@@ -303,6 +307,7 @@ func (m *StatusModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.groupsInfo = iconStyle.Bold(true).Render("-")
 		}
 		m.isAuthLoading = false
+		cmds = append(cmds, m.incrementProgress())
 
 	case NodeInfoMsg:
 		if msg.NodeAPIStatusErr == "" {
@@ -311,6 +316,7 @@ func (m *StatusModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.nodeInfo = msg.NodeAPIStatusErr
 		}
 		m.isNodeLoading = false
+		cmds = append(cmds, m.incrementProgress())
 
 	case PodInfoMsg:
 		if msg.PodAPIStatusErr == "" {
@@ -319,6 +325,7 @@ func (m *StatusModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.podInfo = msg.PodAPIStatusErr
 		}
 		m.isPodLoading = false
+		cmds = append(cmds, m.incrementProgress())
 
 	case EventInfoMsg:
 		if msg.EventAPIStatusErr == "" {
@@ -331,9 +338,27 @@ func (m *StatusModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.eventInfo = msg.EventAPIStatusErr
 		}
 		m.isEventLoading = false
+		cmds = append(cmds, m.incrementProgress())
+
+	case AsyncTaskAllDoneMsg:
+		return m, tea.Quit
+
 	}
 
 	return m, tea.Batch(cmds...)
+}
+
+type AsyncTaskAllDoneMsg struct{}
+
+// helper func: return tea.Msg when async tasks done
+func (m *StatusModel) incrementProgress() tea.Cmd {
+	m.completedTasks++
+	if m.completedTasks >= m.totalAsyncTasks {
+		return func() tea.Msg {
+			return AsyncTaskAllDoneMsg{}
+		}
+	}
+	return nil
 }
 
 // helper func: render spinner if is_Loading variable is true
