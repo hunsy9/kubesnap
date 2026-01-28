@@ -11,6 +11,7 @@ var (
 	headerStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultThemeColor)).Bold(true).Italic(true)
 	urlStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultUrlColor))
 	activeStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultActiveColor))
+	warningStyle = lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultWarningColor))
 	errorStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultErrorColor))
 	iconStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultThemeColor))
 )
