@@ -1,4 +1,4 @@
-package switchingList
+package listview
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/hunsy9/kubesnap/pkg/constant"
+	c "github.com/hunsy9/kubesnap/pkg/constant"
 )
 
 type OperationResultMsg struct {
@@ -27,9 +27,9 @@ type UIModel struct {
 	output    string             // success output message for context switching
 }
 
-func NewUIModel(items []list.Item, title string, tag string) *UIModel {
+func NewSwitchingUIModel(items []list.Item, title string, tag string) *UIModel {
 
-	l := list.New(items, ItemDelegate{}, constant.DefaultWidth, constant.ListHeight)
+	l := list.New(items, ItemDelegate{}, c.DefaultWidth, c.ListHeight)
 
 	l.SetShowStatusBar(false)
 	l.SetShowPagination(true)
@@ -45,7 +45,7 @@ func NewUIModel(items []list.Item, title string, tag string) *UIModel {
 	l.Styles.HelpStyle = helpStyle
 	l.Styles.FilterPrompt = helpStyle
 
-	if tag == constant.Context {
+	if tag == c.Context {
 		l.AdditionalShortHelpKeys = func() []key.Binding {
 			return []key.Binding{
 				key.NewBinding(key.WithKeys("r"), key.WithHelp("r", "rename")),
@@ -85,7 +85,7 @@ func (m *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.switching = true
 			return m, tea.Batch(m.spinner.Tick, m.operation(m.choice))
 		case "d":
-			if m.tag == constant.Namespace {
+			if m.tag == c.Namespace {
 				break
 			}
 			currentWidth := m.list.Width()

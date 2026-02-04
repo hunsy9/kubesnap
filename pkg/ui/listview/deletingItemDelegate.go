@@ -1,4 +1,4 @@
-package switchingList
+package listview
 
 import (
 	"fmt"

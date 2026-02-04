@@ -11,8 +11,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	c "github.com/hunsy9/kubesnap/pkg/constant"
 	"github.com/hunsy9/kubesnap/pkg/envutil"
-	"github.com/hunsy9/kubesnap/pkg/model"
-	slm "github.com/hunsy9/kubesnap/pkg/model/switchingList"
+	lv "github.com/hunsy9/kubesnap/pkg/ui/listview"
 	"github.com/hunsy9/kubesnap/pkg/yamlutil"
 	"github.com/pkg/errors"
 )
@@ -29,7 +28,7 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 	// transform kubeconfig file to Kubeconfig model
 	// TODO: use client-go functions instead of using yamlutil
 
-	var unMarshalTarget model.KubeConfig
+	var unMarshalTarget yamlutil.KubeConfig
 
 	yamlContext := yamlutil.NewParsingContext(filepath, &unMarshalTarget)
 	err := yamlutil.ParseYaml(yamlContext)
@@ -45,18 +44,18 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 
 	items := []list.Item{}
 	currentContextMarker := lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultActiveColor)).Bold(true).Render(c.CurrentContextMarker)
-	items = append(items, slm.Item(unMarshalTarget.CurrentContext+currentContextMarker)) // push current context first
+	items = append(items, lv.Item(unMarshalTarget.CurrentContext+currentContextMarker)) // push current context first
 
 	for _, ctx := range unMarshalTarget.Contexts {
 		if unMarshalTarget.CurrentContext == ctx.Name {
 			continue
 		}
-		items = append(items, slm.Item(ctx.Name))
+		items = append(items, lv.Item(ctx.Name))
 	}
 
 	// create new bubbletea program with bunch of contexts
 
-	md := slm.NewUIModel(items, c.DefaultSwitchingContextHeaderMessage, c.Context)
+	md := lv.NewSwitchingUIModel(items, c.DefaultSwitchingContextHeaderMessage, c.Context)
 	md.SetOperationFunc(SwitchContext)
 	p := tea.NewProgram(md, tea.WithAltScreen())
 
@@ -69,7 +68,7 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 	// print updatedModel's output
 	// it represents switched target
 
-	if uiModel, ok := updatedModel.(*slm.UIModel); ok {
+	if uiModel, ok := updatedModel.(*lv.UIModel); ok {
 		if output := uiModel.GetOutput(); output != "" {
 			fmt.Print(output)
 		}
@@ -82,6 +81,6 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 func SwitchContext(contextName string) tea.Cmd {
 	return func() tea.Msg {
 		exec_err := exec.Command("kubectl", "config", "use-context", contextName).Run()
-		return slm.OperationResultMsg{Err: exec_err}
+		return lv.OperationResultMsg{Err: exec_err}
 	}
 }

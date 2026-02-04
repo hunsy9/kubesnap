@@ -8,7 +8,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	c "github.com/hunsy9/kubesnap/pkg/constant"
 	"github.com/hunsy9/kubesnap/pkg/envutil"
-	ks "github.com/hunsy9/kubesnap/pkg/model/kubestatus"
+	ks "github.com/hunsy9/kubesnap/pkg/ui/kubestatus"
 	"github.com/pkg/errors"
 	"k8s.io/client-go/tools/clientcmd"
 )

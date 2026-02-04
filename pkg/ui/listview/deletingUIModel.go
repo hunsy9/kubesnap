@@ -1,4 +1,4 @@
-package switchingList
+package listview
 
 import (
 	"fmt"
@@ -7,25 +7,9 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/hunsy9/kubesnap/pkg/constant"
+	c "github.com/hunsy9/kubesnap/pkg/constant"
 	"k8s.io/client-go/tools/clientcmd"
 )
-
-type DeletingOperation func(targets []string) tea.Cmd
-
-type DeletionResultMsg struct {
-	Err   error
-	Count int
-}
-
-type DeletingModel struct {
-	parent    tea.Model
-	list      list.Model
-	spinner   spinner.Model
-	selected  map[string]struct{}
-	operation DeletingOperation
-	deleting  bool
-}
 
 func DeleteOperation(targets []string) tea.Cmd {
 	return func() tea.Msg {
@@ -50,12 +34,28 @@ func DeleteOperation(targets []string) tea.Cmd {
 	}
 }
 
+type DeletingOperation func(targets []string) tea.Cmd
+
+type DeletionResultMsg struct {
+	Err   error
+	Count int
+}
+
+type DeletingModel struct {
+	parent    tea.Model
+	list      list.Model
+	spinner   spinner.Model
+	selected  map[string]struct{}
+	operation DeletingOperation
+	deleting  bool
+}
+
 func NewDeletingModel(parent tea.Model, items []list.Item, width int, op DeletingOperation) *DeletingModel {
 	selected := make(map[string]struct{})
 	delegate := DeletingItemDelegate{Selected: selected}
 
-	l := list.New(items, delegate, width, constant.ListHeight)
-	l.Title = constant.DefaultDeletingContextHeaderMessage
+	l := list.New(items, delegate, width, c.ListHeight)
+	l.Title = c.DefaultDeletingContextHeaderMessage
 
 	l.Styles.Title = titleStyle
 	l.Styles.PaginationStyle = paginationStyle
