@@ -84,6 +84,14 @@ func (m *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			m.switching = true
 			return m, tea.Batch(m.spinner.Tick, m.operation(m.choice))
+		case "d":
+			if m.tag == constant.Namespace {
+				break
+			}
+			currentWidth := m.list.Width()
+			items := m.list.Items()
+
+			return NewDeletingModel(m, items, currentWidth, DeleteOperation), nil
 		}
 	case OperationResultMsg:
 		m.switching = false
@@ -93,6 +101,15 @@ func (m *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		m.output = fmt.Sprintf("Switched to %s: %s\n", m.tag, m.choice)
 		return m, tea.Quit
+
+	case DeletionResultMsg:
+		if msg.Err != nil {
+			m.output = fmt.Sprintf("Error deleting %v\n", msg.Err)
+		} else {
+			m.output = fmt.Sprintf("Deleted %d contexts.\n", msg.Count)
+		}
+		return m, tea.Quit
+
 	case tea.QuitMsg:
 		return m, tea.Quit
 	}
