@@ -13,6 +13,9 @@ const (
 	DefaultNamespace                       string = "default"
 	Bullet                                 string = "✓"
 
+	// Deleting List UI
+	DefaultDeletingContextHeaderMessage string = "Select contexts to delete"
+
 	// Color Configuration
 	DefaultThemeColor   string = "#4777BA"
 	DefaultActiveColor  string = "#00d919"
