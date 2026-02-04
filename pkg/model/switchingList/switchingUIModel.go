@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
@@ -32,6 +33,10 @@ func NewUIModel(items []list.Item, title string, tag string) *UIModel {
 
 	l.SetShowStatusBar(false)
 	l.SetShowPagination(true)
+	l.SetShowHelp(true)
+	l.KeyMap.CloseFullHelp.Unbind()
+	l.KeyMap.ShowFullHelp.Unbind()
+	l.KeyMap.Filter.SetHelp("/", "search")
 
 	l.Title = title
 
@@ -39,6 +44,15 @@ func NewUIModel(items []list.Item, title string, tag string) *UIModel {
 	l.Styles.PaginationStyle = paginationStyle
 	l.Styles.HelpStyle = helpStyle
 	l.Styles.FilterPrompt = helpStyle
+
+	if tag == constant.Context {
+		l.AdditionalShortHelpKeys = func() []key.Binding {
+			return []key.Binding{
+				key.NewBinding(key.WithKeys("r"), key.WithHelp("r", "rename")),
+				key.NewBinding(key.WithKeys("d"), key.WithHelp("d", "delete")),
+			}
+		}
+	}
 
 	sp := spinner.New()
 	sp.Spinner = spinner.Dot
@@ -54,10 +68,10 @@ func (m *UIModel) Init() tea.Cmd {
 func (m *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		m.list.SetWidth(msg.Width)
 		return m, nil
 
 	case tea.KeyMsg:
+
 		switch keypress := msg.String(); keypress {
 		case "q", "ctrl+c":
 			return m, tea.Quit

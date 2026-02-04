@@ -2,8 +2,8 @@ package constant
 
 const (
 	// Switching List UI
-	DefaultWidth                           int    = 10
-	ListHeight                             int    = 15
+	DefaultWidth                           int    = 60
+	ListHeight                             int    = 11
 	DefaultSwitchingContextHeaderMessage   string = "Kubesnap: Context Switcher"
 	DefaultSwitchingNamespaceHeaderMessage string = "Kubesnap: Namespace Switcher"
 	CurrentContextMarker                   string = " ✓ current-context"
