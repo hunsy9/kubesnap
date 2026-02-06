@@ -92,6 +92,14 @@ func (m *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			items := m.list.Items()
 
 			return NewDeletingModel(m, items, currentWidth, DeleteOperation), nil
+		case "r":
+			if m.tag == c.Namespace {
+				break
+			}
+			currentWidth := m.list.Width()
+			items := m.list.Items()
+
+			return NewRenamingModel(m, items, currentWidth, RenameOperation), nil
 		}
 	case OperationResultMsg:
 		m.switching = false
@@ -107,6 +115,14 @@ func (m *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.output = fmt.Sprintf("Error deleting %v\n", msg.Err)
 		} else {
 			m.output = fmt.Sprintf("Deleted %d contexts.\n", msg.Count)
+		}
+		return m, tea.Quit
+
+	case RenameResultMsg:
+		if msg.Err != nil {
+			m.output = fmt.Sprintf("Error renaming: %v\n", msg.Err)
+		} else {
+			m.output = "Renamed context successfully.\n"
 		}
 		return m, tea.Quit
 
