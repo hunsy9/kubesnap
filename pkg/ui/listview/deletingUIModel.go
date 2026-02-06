@@ -107,7 +107,7 @@ func (m *DeletingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter", " ":
 			i, ok := m.list.SelectedItem().(Item)
 			if ok {
-				val := string(i)
+				val := string(i.Name)
 				if _, exists := m.selected[val]; exists {
 					delete(m.selected, val)
 				} else {

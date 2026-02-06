@@ -20,7 +20,7 @@ func (d DeletingItemDelegate) Render(w io.Writer, m list.Model, index int, listI
 	if !ok {
 		return
 	}
-	str := string(i)
+	str := string(i.DisplayName)
 
 	_, selected := d.Selected[str]
 	checkbox := "[ ]"
