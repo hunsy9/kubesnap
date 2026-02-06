@@ -77,8 +77,8 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 	// print updatedModel's output
 	// it represents switched target
 
-	if uiModel, ok := updatedModel.(*lv.UIModel); ok {
-		if output := uiModel.GetOutput(); output != "" {
+	if switchingUIModel, ok := updatedModel.(*lv.SwitchingUIModel); ok {
+		if output := switchingUIModel.GetOutput(); output != "" {
 			fmt.Print(output)
 		}
 	}

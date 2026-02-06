@@ -82,8 +82,8 @@ func (_ SwitchNamespaceCmd) Run(stdout, _ io.Writer) error {
 		os.Exit(1)
 	}
 
-	if uiModel, ok := finalModel.(*lv.UIModel); ok {
-		if output := uiModel.GetOutput(); output != "" {
+	if switchingUIModel, ok := finalModel.(*lv.SwitchingUIModel); ok {
+		if output := switchingUIModel.GetOutput(); output != "" {
 			fmt.Print(output)
 		}
 	}

@@ -17,7 +17,7 @@ type OperationResultMsg struct {
 
 type SwitchingOperation func(param string) tea.Cmd // switching function executed by UIModel
 
-type UIModel struct {
+type SwitchingUIModel struct {
 	spinner   spinner.Model      // spinner model
 	list      list.Model         // list model
 	tag       string             // operation tag
@@ -27,7 +27,7 @@ type UIModel struct {
 	output    string             // success output message for context switching
 }
 
-func NewSwitchingUIModel(items []list.Item, title string, tag string) *UIModel {
+func NewSwitchingUIModel(items []list.Item, title string, tag string) *SwitchingUIModel {
 
 	l := list.New(items, ItemDelegate{}, c.DefaultWidth, c.ListHeight)
 
@@ -58,14 +58,14 @@ func NewSwitchingUIModel(items []list.Item, title string, tag string) *UIModel {
 	sp.Spinner = spinner.Dot
 	sp.Style = spinnerStyle
 
-	return &UIModel{spinner: sp, list: l, tag: tag}
+	return &SwitchingUIModel{spinner: sp, list: l, tag: tag}
 }
 
-func (m *UIModel) Init() tea.Cmd {
+func (m *SwitchingUIModel) Init() tea.Cmd {
 	return nil
 }
 
-func (m *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *SwitchingUIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		return m, nil
@@ -140,7 +140,7 @@ func (m *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m *UIModel) View() string {
+func (m *SwitchingUIModel) View() string {
 	if m.switching {
 		switchingMsg := fmt.Sprintf("%s Switching %s to %s...", m.spinner.View(), m.tag, m.choice)
 		m.list.Title = switchingMsg
@@ -149,10 +149,10 @@ func (m *UIModel) View() string {
 	return boxStyle.Render(m.list.View())
 }
 
-func (m *UIModel) SetOperationFunc(operation SwitchingOperation) {
+func (m *SwitchingUIModel) SetOperationFunc(operation SwitchingOperation) {
 	m.operation = operation
 }
 
-func (m *UIModel) GetOutput() string {
+func (m *SwitchingUIModel) GetOutput() string {
 	return m.output
 }
