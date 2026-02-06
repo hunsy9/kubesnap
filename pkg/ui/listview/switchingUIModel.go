@@ -65,6 +65,10 @@ func (m *SwitchingUIModel) Init() tea.Cmd {
 	return nil
 }
 
+func (m *SwitchingUIModel) IsCustomKeyEnablementInValid() bool {
+	return m.tag == c.Namespace || m.list.FilterState() != list.Unfiltered || m.switching
+}
+
 func (m *SwitchingUIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
@@ -85,7 +89,7 @@ func (m *SwitchingUIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.switching = true
 			return m, tea.Batch(m.spinner.Tick, m.operation(m.choice))
 		case "d":
-			if m.tag == c.Namespace {
+			if m.IsCustomKeyEnablementInValid() {
 				break
 			}
 			currentWidth := m.list.Width()
@@ -93,7 +97,7 @@ func (m *SwitchingUIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return NewDeletingModel(m, items, currentWidth, DeleteOperation), nil
 		case "r":
-			if m.tag == c.Namespace {
+			if m.IsCustomKeyEnablementInValid() {
 				break
 			}
 			currentWidth := m.list.Width()
