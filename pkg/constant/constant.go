@@ -2,8 +2,8 @@ package constant
 
 const (
 	// Switching List UI
-	DefaultWidth                           int    = 60
-	ListHeight                             int    = 11
+	DefaultWidth                           int    = 200
+	ListHeight                             int    = 12
 	DefaultSwitchingContextHeaderMessage   string = "Kubesnap: Context Switcher"
 	DefaultSwitchingNamespaceHeaderMessage string = "Kubesnap: Namespace Switcher"
 	CurrentContextMarker                   string = " ✓ current-context"
@@ -15,6 +15,10 @@ const (
 
 	// Deleting List UI
 	DefaultDeletingContextHeaderMessage string = "Select contexts to delete"
+
+	// Renaming List UI
+	DefaultRenamingContextHeaderMessage string = "Select context to rename"
+	QuitRenameMode                      string = "(ESC to return)"
 
 	// Color Configuration
 	DefaultThemeColor   string = "#4777BA"
