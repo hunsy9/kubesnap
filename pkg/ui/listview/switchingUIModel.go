@@ -79,7 +79,7 @@ func (m *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			i, ok := m.list.SelectedItem().(Item)
 			if ok {
-				m.choice = string(i)
+				m.choice = string(i.Name)
 			}
 
 			m.switching = true

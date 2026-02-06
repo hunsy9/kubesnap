@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"time"
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
@@ -44,13 +45,21 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 
 	items := []list.Item{}
 	currentContextMarker := lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultActiveColor)).Bold(true).Render(c.CurrentContextMarker)
-	items = append(items, lv.Item(unMarshalTarget.CurrentContext+currentContextMarker)) // push current context first
+	currentContextItem := lv.Item{
+		DisplayName: unMarshalTarget.CurrentContext + currentContextMarker,
+		Name:        unMarshalTarget.CurrentContext,
+	}
+	items = append(items, currentContextItem) // push current context first
 
 	for _, ctx := range unMarshalTarget.Contexts {
 		if unMarshalTarget.CurrentContext == ctx.Name {
 			continue
 		}
-		items = append(items, lv.Item(ctx.Name))
+		contextItem := lv.Item{
+			DisplayName: ctx.Name,
+			Name:        ctx.Name,
+		}
+		items = append(items, lv.Item(contextItem))
 	}
 
 	// create new bubbletea program with bunch of contexts
@@ -81,6 +90,7 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 func SwitchContext(contextName string) tea.Cmd {
 	return func() tea.Msg {
 		exec_err := exec.Command("kubectl", "config", "use-context", contextName).Run()
+		time.Sleep(time.Millisecond * 500)
 		return lv.OperationResultMsg{Err: exec_err}
 	}
 }

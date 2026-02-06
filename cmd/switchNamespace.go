@@ -52,14 +52,22 @@ func (_ SwitchNamespaceCmd) Run(stdout, _ io.Writer) error {
 	items := []list.Item{}
 	currentNamespace := GetCurrentNamespace()
 	currentNamespaceMarker := lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultActiveColor)).Bold(true).Render(c.CurrentNamespaceMarker)
+	currentNamespaceItem := lv.Item{
+		DisplayName: currentNamespace + currentNamespaceMarker,
+		Name:        currentNamespace,
+	}
 
-	items = append(items, lv.Item(currentNamespace+currentNamespaceMarker)) // push current namespace first
+	items = append(items, currentNamespaceItem) // push current namespace first
 
 	for _, namespace := range namespaces.Items {
 		if namespace.Name == currentNamespace {
 			continue
 		}
-		items = append(items, lv.Item(namespace.Name))
+		namespaceItem := lv.Item{
+			DisplayName: namespace.Name,
+			Name:        namespace.Name,
+		}
+		items = append(items, namespaceItem)
 	}
 
 	// create new bubbletea program with bunch of namespaces
