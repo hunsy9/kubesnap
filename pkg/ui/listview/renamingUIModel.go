@@ -158,9 +158,9 @@ func (m *RenamingModel) View() string {
 	if m.renaming {
 		inputView := fmt.Sprintf(
 			"\n  Rename %s to:\n  %s\n\n  %s",
-			lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultThemeColor)).Bold(true).Render(m.choice),
+			renameTargetContextStyle.Render(m.choice),
 			m.textInput.View(),
-			lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultUrlColor)).Render(c.QuitRenameMode),
+			quitRenameModeFooterStyle.Render(c.QuitRenameMode),
 		)
 		return lipgloss.JoinVertical(lipgloss.Left, listView, inputView)
 	}
