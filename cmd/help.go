@@ -19,15 +19,14 @@ OPTIONS:
   -h, --help    Show this message
 
 COMMANDS:
-  // General Command
-  ks		Show current cluster/namespace detail
+  ks		Show current cluster/namespace overview
   
-  // Context Command
-  ks ctx        Open Context Switcher
+  ks ctx        Open context switcher
+  └─'d' key     Switch to context delete mode   
+  └─'r' key     Switch to context rename mode
 
-  // Namespace Command
-  ks ns         Open Namespace Switcher
-  ks ns -       Switch to Default Namespace
+  ks ns         Open namespace switcher
+  ks ns ~       Switch to default namespace
 `
 	fmt.Fprint(stdout, help)
 	return nil

@@ -2,8 +2,8 @@ package constant
 
 const (
 	// Switching List UI
-	DefaultWidth                           int    = 10
-	ListHeight                             int    = 15
+	DefaultWidth                           int    = 200
+	ListHeight                             int    = 11
 	DefaultSwitchingContextHeaderMessage   string = "Kubesnap: Context Switcher"
 	DefaultSwitchingNamespaceHeaderMessage string = "Kubesnap: Namespace Switcher"
 	CurrentContextMarker                   string = " ✓ current-context"
@@ -13,13 +13,26 @@ const (
 	DefaultNamespace                       string = "default"
 	Bullet                                 string = "✓"
 
-	// Color Configuration
-	DefaultThemeColor   string = "#4777BA"
-	DefaultActiveColor  string = "#00d919"
-	DefaultWarningColor string = "#f1c40f"
-	DefaultUrlColor     string = "#626262"
-	DefaultErrorColor   string = "#d90808"
+	// Deleting List UI
+	DefaultDeletingContextHeaderMessage string = "Select contexts to delete"
 
-	// File Paths
-	DefaultKubeConfigLocation string = "/.kube/config"
+	// Renaming List UI
+	DefaultRenamingContextHeaderMessage string = "Select context to rename"
+	QuitRenameMode                      string = "(ESC to return)"
+
+	// Color Configuration
+	DefaultThemeColor     string = "#4777BA"
+	DefaultActiveColor    string = "#00d919"
+	DefaultWarningColor   string = "#f1c40f"
+	DefaultUrlColor       string = "#626262"
+	DefaultErrorColor     string = "#d90808"
+	DefaultUpdateMsgColor string = "#e9ad55"
+
+	// File Path/Name
+	DefaultKubeConfigLocation       string = "/.kube/config"
+	DefaultKubesnapConfigLocation   string = ".kubesnap"
+	DefaultKubesnapVersionCacheFile string = "version_cache.json"
+
+	// Github Release API URL
+	GithubReleaseURL string = "https://api.github.com/repos/hunsy9/kubesnap/releases/latest"
 )

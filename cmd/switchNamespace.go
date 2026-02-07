@@ -15,7 +15,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	c "github.com/hunsy9/kubesnap/pkg/constant"
 	"github.com/hunsy9/kubesnap/pkg/envutil"
-	slm "github.com/hunsy9/kubesnap/pkg/model/switchingList"
+	lv "github.com/hunsy9/kubesnap/pkg/ui/listview"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 
@@ -52,19 +52,27 @@ func (_ SwitchNamespaceCmd) Run(stdout, _ io.Writer) error {
 	items := []list.Item{}
 	currentNamespace := GetCurrentNamespace()
 	currentNamespaceMarker := lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultActiveColor)).Bold(true).Render(c.CurrentNamespaceMarker)
+	currentNamespaceItem := lv.Item{
+		DisplayName: currentNamespace + currentNamespaceMarker,
+		Name:        currentNamespace,
+	}
 
-	items = append(items, slm.Item(currentNamespace+currentNamespaceMarker)) // push current namespace first
+	items = append(items, currentNamespaceItem) // push current namespace first
 
 	for _, namespace := range namespaces.Items {
 		if namespace.Name == currentNamespace {
 			continue
 		}
-		items = append(items, slm.Item(namespace.Name))
+		namespaceItem := lv.Item{
+			DisplayName: namespace.Name,
+			Name:        namespace.Name,
+		}
+		items = append(items, namespaceItem)
 	}
 
 	// create new bubbletea program with bunch of namespaces
 
-	md := slm.NewUIModel(items, c.DefaultSwitchingNamespaceHeaderMessage, c.Namespace)
+	md := lv.NewSwitchingUIModel(items, c.DefaultSwitchingNamespaceHeaderMessage, c.Namespace)
 	md.SetOperationFunc(SwitchNamespaceForTea)
 	p := tea.NewProgram(md, tea.WithAltScreen())
 
@@ -74,8 +82,8 @@ func (_ SwitchNamespaceCmd) Run(stdout, _ io.Writer) error {
 		os.Exit(1)
 	}
 
-	if uiModel, ok := finalModel.(*slm.UIModel); ok {
-		if output := uiModel.GetOutput(); output != "" {
+	if switchingUIModel, ok := finalModel.(*lv.SwitchingUIModel); ok {
+		if output := switchingUIModel.GetOutput(); output != "" {
 			fmt.Print(output)
 		}
 	}
@@ -134,6 +142,6 @@ func GetCurrentNamespace() string {
 func SwitchNamespaceForTea(namespaceName string) tea.Cmd {
 	return func() tea.Msg {
 		exec_err := exec.Command("kubectl", "config", "set-context", "--current", "--namespace="+namespaceName).Run()
-		return slm.OperationResultMsg{Err: exec_err}
+		return lv.OperationResultMsg{Err: exec_err}
 	}
 }

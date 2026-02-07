@@ -10,6 +10,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	c "github.com/hunsy9/kubesnap/pkg/constant"
+	"github.com/hunsy9/kubesnap/pkg/version"
 	authenticationv1 "k8s.io/api/authentication/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -39,6 +40,16 @@ type PodInfoMsg struct {
 type EventInfoMsg struct {
 	WarningEvents     int
 	EventAPIStatusErr string
+}
+
+type UpdateAvailableMsg string
+
+func (m *StatusModel) checkForUpdate() tea.Msg {
+	latest, err := version.CheckVersionUpdate()
+	if err != nil || latest == "" {
+		return UpdateAvailableMsg("")
+	}
+	return UpdateAvailableMsg(latest)
 }
 
 func (m *StatusModel) getNodeInfo() tea.Msg {
@@ -247,6 +258,7 @@ type StatusModel struct {
 	isEventLoading  bool
 	totalAsyncTasks int
 	completedTasks  int
+	latestVersion   string
 }
 
 func NewStatusModel(clientSet *kubernetes.Clientset, clusterName string, namespace string, endpoint string) *StatusModel {
@@ -264,7 +276,7 @@ func NewStatusModel(clientSet *kubernetes.Clientset, clusterName string, namespa
 		isNodeLoading:   true,
 		isPodLoading:    true,
 		isEventLoading:  true,
-		totalAsyncTasks: 5,
+		totalAsyncTasks: 6,
 	}
 }
 
@@ -276,6 +288,7 @@ func (m *StatusModel) Init() tea.Cmd {
 		m.getNodeInfo,
 		m.getPodInfo,
 		m.getEventInfo,
+		m.checkForUpdate,
 	)
 }
 
@@ -338,6 +351,10 @@ func (m *StatusModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.eventInfo = msg.EventAPIStatusErr
 		}
 		m.isEventLoading = false
+		cmds = append(cmds, m.incrementProgress())
+
+	case UpdateAvailableMsg:
+		m.latestVersion = string(msg)
 		cmds = append(cmds, m.incrementProgress())
 
 	case AsyncTaskAllDoneMsg:
@@ -425,5 +442,15 @@ func (m *StatusModel) View() string {
 			bottomLayout,
 		),
 	)
+
+	if m.latestVersion != "" {
+		updateMsg := updageMsgStyle.Render(fmt.Sprintf("⚡ New update available! version %s -> %s", version.Version, m.latestVersion))
+		layout = lipgloss.JoinVertical(
+			lipgloss.Left,
+			updateMsg,
+			layout,
+		)
+	}
+
 	return layout
 }

@@ -1,4 +1,4 @@
-package model
+package yamlutil
 
 type KubeConfig struct {
 	APIVersion     string    `yaml:"apiVersion"`
