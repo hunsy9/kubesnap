@@ -33,7 +33,6 @@ func NewSwitchingUIModel(items []list.Item, title string, tag string) *Switching
 
 	l.SetShowStatusBar(false)
 	l.SetShowPagination(true)
-	l.SetShowHelp(true)
 	l.KeyMap.CloseFullHelp.Unbind()
 	l.KeyMap.ShowFullHelp.Unbind()
 	l.KeyMap.Filter.SetHelp("/", "search")
