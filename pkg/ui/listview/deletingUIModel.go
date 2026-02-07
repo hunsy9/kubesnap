@@ -62,7 +62,7 @@ func NewDeletingModel(parent tea.Model, items []list.Item, width int, op Deletin
 	selected := make(map[string]struct{})
 	delegate := DeletingItemDelegate{Selected: selected}
 
-	l := list.New(items, delegate, width, c.ListHeight)
+	l := list.New(items, delegate, width, c.ListHeight+2)
 	l.Title = c.DefaultDeletingContextHeaderMessage
 
 	l.Styles.Title = titleStyle
@@ -194,7 +194,7 @@ func (m *DeletingModel) View() string {
 	if m.confirming {
 		targets := make([]string, 0, len(m.selected))
 		for k := range m.selected {
-			targets = append(targets, "• " + k)
+			targets = append(targets, "• "+k)
 		}
 		targetstring := strings.Join(targets, "\n ")
 
