@@ -66,7 +66,7 @@ type RenamingModel struct {
 
 func NewRenamingModel(parent tea.Model, items []list.Item, width int, op RenamingOperation) *RenamingModel {
 
-	l := list.New(items, RenamingItemDelegate{}, width, c.ListHeight)
+	l := list.New(items, RenamingItemDelegate{}, width, c.ListHeight+2)
 	l.Title = c.DefaultRenamingContextHeaderMessage
 
 	l.Styles.Title = titleStyle
