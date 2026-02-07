@@ -28,8 +28,10 @@ const (
 	DefaultErrorColor     string = "#d90808"
 	DefaultUpdateMsgColor string = "#e9ad55"
 
-	// File Paths
-	DefaultKubeConfigLocation string = "/.kube/config"
+	// File Path/Name
+	DefaultKubeConfigLocation       string = "/.kube/config"
+	DefaultKubesnapConfigLocation   string = ".kubesnap"
+	DefaultKubesnapVersionCacheFile string = "version_cache.json"
 
 	// Github Release API URL
 	GithubReleaseURL string = "https://api.github.com/repos/hunsy9/kubesnap/releases/latest"

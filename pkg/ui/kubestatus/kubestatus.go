@@ -47,7 +47,7 @@ type UpdateAvailableMsg string
 func (m *StatusModel) checkForUpdate() tea.Msg {
 	latest, err := version.CheckVersionUpdate()
 	if err != nil || latest == "" {
-		return nil
+		return UpdateAvailableMsg("")
 	}
 	return UpdateAvailableMsg(latest)
 }
@@ -356,7 +356,6 @@ func (m *StatusModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case UpdateAvailableMsg:
 		m.latestVersion = string(msg)
 		cmds = append(cmds, m.incrementProgress())
-		return m, nil
 
 	case AsyncTaskAllDoneMsg:
 		return m, tea.Quit
