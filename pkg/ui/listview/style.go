@@ -19,4 +19,7 @@ var (
 	// Renaming listview style
 	renameTargetContextStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultThemeColor)).Bold(true)
 	quitRenameModeFooterStyle = lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultUrlColor))
+
+	// error style
+	errorStyle = lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultErrorColor))
 )
