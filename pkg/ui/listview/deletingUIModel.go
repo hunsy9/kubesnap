@@ -194,14 +194,15 @@ func (m *DeletingModel) View() string {
 	if m.confirming {
 		targets := make([]string, 0, len(m.selected))
 		for k := range m.selected {
-			targets = append(targets, k)
+			targets = append(targets, "• " + k)
 		}
 		targetstring := strings.Join(targets, "\n ")
 
 		inputView := fmt.Sprintf(
-			"\n You are about to delete %v contexts: \n\n %s \n\n This action cannot be undone. \n Type \"yes\" to confirm\n\n  %s\n\n %s\n",
+			"\n You are about to delete %v contexts: \n\n %s \n\n This action cannot be undone. \n Type \"%s\" to confirm\n\n  %s\n\n %s\n",
 			len(targets),
-			renameTargetContextStyle.Render(targetstring),
+			targetContextStyle.Render(targetstring),
+			activeStyle.Render("yes"),
 			m.textInput.View(),
 			quitRenameModeFooterStyle.Render(c.QuitRenameMode),
 		)

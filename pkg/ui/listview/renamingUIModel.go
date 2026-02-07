@@ -158,7 +158,7 @@ func (m *RenamingModel) View() string {
 	if m.renaming {
 		inputView := fmt.Sprintf(
 			"\n  Rename %s to:\n  %s\n\n  %s",
-			renameTargetContextStyle.Render(m.choice),
+			targetContextStyle.Render(m.choice),
 			m.textInput.View(),
 			quitRenameModeFooterStyle.Render(c.QuitRenameMode),
 		)
