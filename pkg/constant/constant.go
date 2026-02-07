@@ -21,12 +21,16 @@ const (
 	QuitRenameMode                      string = "(ESC to return)"
 
 	// Color Configuration
-	DefaultThemeColor   string = "#4777BA"
-	DefaultActiveColor  string = "#00d919"
-	DefaultWarningColor string = "#f1c40f"
-	DefaultUrlColor     string = "#626262"
-	DefaultErrorColor   string = "#d90808"
+	DefaultThemeColor     string = "#4777BA"
+	DefaultActiveColor    string = "#00d919"
+	DefaultWarningColor   string = "#f1c40f"
+	DefaultUrlColor       string = "#626262"
+	DefaultErrorColor     string = "#d90808"
+	DefaultUpdateMsgColor string = "#e9ad55"
 
 	// File Paths
 	DefaultKubeConfigLocation string = "/.kube/config"
+
+	// Github Release API URL
+	GithubReleaseURL string = "https://api.github.com/repos/hunsy9/kubesnap/releases/latest"
 )
