@@ -20,9 +20,8 @@ func (d DeletingItemDelegate) Render(w io.Writer, m list.Model, index int, listI
 	if !ok {
 		return
 	}
-	str := string(i.DisplayName)
 
-	_, selected := d.Selected[str]
+	_, selected := d.Selected[i.Name]
 	checkbox := "[ ]"
 	if selected {
 		checkbox = "[X]"
@@ -35,5 +34,5 @@ func (d DeletingItemDelegate) Render(w io.Writer, m list.Model, index int, listI
 		}
 	}
 
-	fmt.Fprint(w, fn(fmt.Sprintf("%s %s", checkbox, str)))
+	fmt.Fprint(w, fn(fmt.Sprintf("%s %s", checkbox, i.DisplayName)))
 }
