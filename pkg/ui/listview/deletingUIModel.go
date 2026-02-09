@@ -19,7 +19,7 @@ func DeleteOperation(targets []string) tea.Cmd {
 		config, err := clientcmd.LoadFromFile(clientcmd.RecommendedHomeFile)
 
 		if err != nil {
-			return DeletionResultMsg{Err: err, Count: 0}
+			return DeletionResultMsg{Err: err, Targets: nil}
 		}
 
 		for _, targetCtx := range targets {
@@ -30,20 +30,20 @@ func DeleteOperation(targets []string) tea.Cmd {
 
 		err = clientcmd.WriteToFile(*config, clientcmd.RecommendedHomeFile)
 		if err != nil {
-			return DeletionResultMsg{Err: err, Count: 0}
+			return DeletionResultMsg{Err: err, Targets: nil}
 		}
 
 		time.Sleep(time.Millisecond * 500)
 
-		return DeletionResultMsg{Err: nil, Count: len(targets)}
+		return DeletionResultMsg{Err: nil, Targets: targets}
 	}
 }
 
 type DeletingOperation func(targets []string) tea.Cmd
 
 type DeletionResultMsg struct {
-	Err   error
-	Count int
+	Err     error
+	Targets []string
 }
 
 type DeletingModel struct {
@@ -77,8 +77,8 @@ func NewDeletingModel(parent tea.Model, items []list.Item, width int, op Deletin
 
 	l.AdditionalShortHelpKeys = func() []key.Binding {
 		return []key.Binding{
-			key.NewBinding(key.WithKeys("enter"), key.WithHelp("enter", "toggle")),
-			key.NewBinding(key.WithKeys("d"), key.WithHelp("d", "delete")),
+			key.NewBinding(key.WithKeys(" "), key.WithHelp("space", "toggle")),
+			key.NewBinding(key.WithKeys("enter"), key.WithHelp("enter", "confirm")),
 		}
 	}
 
@@ -153,9 +153,13 @@ func (m *DeletingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "esc":
 			return m.parent, nil
 
-		case "enter", " ":
+		case " ":
 			i, ok := m.list.SelectedItem().(Item)
 			if ok {
+				if i.Name != i.DisplayName { // it is current context
+					m.errorMsg = "  You can't delete current context."
+					return m, nil
+				}
 				val := string(i.Name)
 				if _, exists := m.selected[val]; exists {
 					delete(m.selected, val)
@@ -165,12 +169,14 @@ func (m *DeletingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 
-		case "d":
+		case "enter":
 			if len(m.selected) > 0 {
 				m.confirming = true
 				m.textInput.Focus()
 			}
 		}
+
+		m.errorMsg = ""
 
 	case DeletionResultMsg:
 		m.deleting = false
@@ -188,7 +194,7 @@ func (m *DeletingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m *DeletingModel) View() string {
 	if m.deleting {
-		return fmt.Sprintf("\n\n   %s Deleting %d items from %s...\n\n", m.spinner.View(), len(m.selected), "")
+		return fmt.Sprintf("\n\n   %s Deleting %d items from Kubeconfig\n\n", m.spinner.View(), len(m.selected))
 	}
 
 	if m.confirming {
@@ -213,5 +219,12 @@ func (m *DeletingModel) View() string {
 
 		return boxStyle.Render(inputView)
 	}
-	return boxStyle.Render(m.list.View())
+
+	layout := m.list.View()
+
+	if m.errorMsg != "" {
+		layout += "\n " + errorStyle.Render(m.errorMsg) + "\n"
+	}
+
+	return boxStyle.Render(layout)
 }

@@ -17,6 +17,7 @@ func showHelp(stdout io.Writer) error {
 
 OPTIONS:
   -h, --help    Show this message
+  -v, --version Show current version of kubesnap
 
 COMMANDS:
   ks		Show current cluster/namespace overview
