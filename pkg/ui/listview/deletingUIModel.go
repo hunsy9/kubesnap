@@ -77,8 +77,8 @@ func NewDeletingModel(parent tea.Model, items []list.Item, width int, op Deletin
 
 	l.AdditionalShortHelpKeys = func() []key.Binding {
 		return []key.Binding{
-			key.NewBinding(key.WithKeys("enter"), key.WithHelp("enter", "toggle")),
-			key.NewBinding(key.WithKeys("d"), key.WithHelp("d", "delete")),
+			key.NewBinding(key.WithKeys(" "), key.WithHelp("space", "toggle")),
+			key.NewBinding(key.WithKeys("enter"), key.WithHelp("enter", "confirm")),
 		}
 	}
 
@@ -153,7 +153,7 @@ func (m *DeletingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "esc":
 			return m.parent, nil
 
-		case "enter", " ":
+		case " ":
 			i, ok := m.list.SelectedItem().(Item)
 			if ok {
 				val := string(i.Name)
@@ -165,7 +165,7 @@ func (m *DeletingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 
-		case "d":
+		case "enter":
 			if len(m.selected) > 0 {
 				m.confirming = true
 				m.textInput.Focus()
