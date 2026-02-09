@@ -19,7 +19,7 @@ func DeleteOperation(targets []string) tea.Cmd {
 		config, err := clientcmd.LoadFromFile(clientcmd.RecommendedHomeFile)
 
 		if err != nil {
-			return DeletionResultMsg{Err: err, Count: 0}
+			return DeletionResultMsg{Err: err, Targets: nil}
 		}
 
 		for _, targetCtx := range targets {
@@ -30,20 +30,20 @@ func DeleteOperation(targets []string) tea.Cmd {
 
 		err = clientcmd.WriteToFile(*config, clientcmd.RecommendedHomeFile)
 		if err != nil {
-			return DeletionResultMsg{Err: err, Count: 0}
+			return DeletionResultMsg{Err: err, Targets: nil}
 		}
 
 		time.Sleep(time.Millisecond * 500)
 
-		return DeletionResultMsg{Err: nil, Count: len(targets)}
+		return DeletionResultMsg{Err: nil, Targets: targets}
 	}
 }
 
 type DeletingOperation func(targets []string) tea.Cmd
 
 type DeletionResultMsg struct {
-	Err   error
-	Count int
+	Err     error
+	Targets []string
 }
 
 type DeletingModel struct {
@@ -188,7 +188,7 @@ func (m *DeletingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m *DeletingModel) View() string {
 	if m.deleting {
-		return fmt.Sprintf("\n\n   %s Deleting %d items from %s...\n\n", m.spinner.View(), len(m.selected), "")
+		return fmt.Sprintf("\n\n   %s Deleting %d items from Kubeconfig\n\n", m.spinner.View(), len(m.selected))
 	}
 
 	if m.confirming {

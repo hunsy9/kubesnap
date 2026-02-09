@@ -3,6 +3,7 @@ package listview
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
@@ -117,7 +118,13 @@ func (m *SwitchingUIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if msg.Err != nil {
 			m.output = fmt.Sprintf("Error deleting %v\n", msg.Err)
 		} else {
-			m.output = fmt.Sprintf("Deleted %d contexts.\n", msg.Count)
+			count := len(msg.Targets)
+			targets := make([]string, 0, count)
+			for _, k := range msg.Targets {
+				targets = append(targets, "• "+k)
+			}
+			targetstring := strings.Join(targets, "\n ")
+			m.output = fmt.Sprintf("Deleted following %v contexts.\n%s\n", count, targetstring)
 		}
 		return m, tea.Quit
 
