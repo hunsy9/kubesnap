@@ -38,5 +38,9 @@ func parseCmd(argv []string) Cmd {
 		return HelpCmd{}
 	}
 
+	if argv[0] == "-v" || argv[0] == "--version" {
+		return VersionCmd{}
+	}
+
 	return ErrorCmd{Err: errors.New("kubesnap: unknown command")}
 }
