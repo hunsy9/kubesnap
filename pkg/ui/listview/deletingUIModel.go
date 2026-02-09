@@ -156,6 +156,10 @@ func (m *DeletingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case " ":
 			i, ok := m.list.SelectedItem().(Item)
 			if ok {
+				if i.Name != i.DisplayName { // it is current context
+					m.errorMsg = "  You can't delete current context."
+					return m, nil
+				}
 				val := string(i.Name)
 				if _, exists := m.selected[val]; exists {
 					delete(m.selected, val)
@@ -171,6 +175,8 @@ func (m *DeletingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.textInput.Focus()
 			}
 		}
+
+		m.errorMsg = ""
 
 	case DeletionResultMsg:
 		m.deleting = false
@@ -213,5 +219,12 @@ func (m *DeletingModel) View() string {
 
 		return boxStyle.Render(inputView)
 	}
-	return boxStyle.Render(m.list.View())
+
+	layout := m.list.View()
+
+	if m.errorMsg != "" {
+		layout += "\n " + errorStyle.Render(m.errorMsg) + "\n"
+	}
+
+	return boxStyle.Render(layout)
 }
