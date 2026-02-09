@@ -209,7 +209,7 @@ func (m *SwitchingUIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			for _, k := range msg.Targets {
 				targets = append(targets, "• "+k)
 			}
-			targetstring := strings.Join(targets, "\n ")
+			targetstring := strings.Join(targets, "\n")
 			m.output = fmt.Sprintf("Deleted following %v contexts.\n%s\n", count, targetstring)
 		}
 		return m, tea.Quit
