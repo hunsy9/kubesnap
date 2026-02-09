@@ -22,6 +22,7 @@ builds:
     goos:
       - linux
       - darwin
+      - windows
     goarch:
       - amd64
       - arm64
@@ -57,6 +58,15 @@ release:
     ---
 
     Released by [GoReleaser](https://github.com/goreleaser/goreleaser).
+
+scoops:
+  - repository:
+      owner: hunsy9
+      name: scoop-bucket
+      token: "{{ .Env.GITHUB_TOKEN }}"
+    homepage: "https://github.com/hunsy9/kubesnap"
+    description: "Improved kubernetes context management tool"
+    license: "MIT"
 
 brews:
   - repository:

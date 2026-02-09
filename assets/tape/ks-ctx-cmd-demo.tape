@@ -21,11 +21,10 @@ Sleep 3s
 Type "ks ctx"
 Sleep 500ms
 Enter
-Type "r"
-Sleep 1s
-Down
 Sleep 500ms
-Enter
+Down
+Sleep 1s
+Type "r"
 Sleep 1s
 
 Type "-rename"
@@ -41,12 +40,16 @@ Sleep 1s
 Type "d"
 Sleep 500ms
 Down
-Enter
-Down
-Enter
-
+Space
 Sleep 500ms
-Type "d"
+Down
+Space
+Sleep 500ms
+Up
+Space
+Sleep 500ms
+
+Enter
 
 Sleep 500ms
 Type "yes"

@@ -25,6 +25,12 @@ brew tap hunsy9/kubesnap
 brew install kubesnap
 ```
 
+### Scoop (Windows)
+```powershell
+scoop bucket add hunsy9 https://github.com/hunsy9/scoop-bucket
+scoop install kubesnap
+```
+
 ### Shell Script (Unix-like)
 ```bash
 curl -sfL https://raw.githubusercontent.com/hunsy9/kubesnap/main/install.sh | sh
@@ -43,8 +49,8 @@ curl -sfL https://raw.githubusercontent.com/hunsy9/kubesnap/main/install.sh | sh
 <img width="800" src="./assets/ks-ctx-cmd-demo.gif" alt="kubesnap demo"/>
 
 - `ks ctx`: Open the context switcher.
-    - `'r' key`: Context Rename mode
-    - `'d' key`: Context Delete mode
+    - `'r' key`: Rename Selected Context
+    - `'d' key`: Move to Context Deletion Mode
 
 ### Switch Namespace
 
@@ -68,11 +74,14 @@ Run the install script again or use `brew upgrade kubesnap`.
 
 ### Uninstallation
 ```bash
-# Via Script
-curl -sfL https://raw.githubusercontent.com/hunsy9/kubesnap/main/uninstall.sh | sh
-
 # Via Homebrew
 brew uninstall kubesnap
+
+# Via Scoop
+scoop uninstall kubesnap
+
+# Via Script
+curl -sfL https://raw.githubusercontent.com/hunsy9/kubesnap/main/uninstall.sh | sh
 ```
 
 ---
