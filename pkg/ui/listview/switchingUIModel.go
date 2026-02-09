@@ -64,8 +64,9 @@ type OperationResultMsg struct {
 type SwitchingOperation func(param string) tea.Cmd // switching function executed by UIModel
 
 type SwitchingUIModel struct {
-	spinner            spinner.Model      // spinner model
-	list               list.Model         // list model
+	spinner            spinner.Model // spinner model
+	list               list.Model    // list model
+	title              string
 	tag                string             // operation tag
 	choice             string             // target kubernetes cluster which user selected
 	switching          bool               // variable which shows state of changing context/namespace
@@ -110,7 +111,7 @@ func NewSwitchingUIModel(items []list.Item, title string, tag string) *Switching
 	ti.CharLimit = 156
 	ti.Width = 150
 
-	return &SwitchingUIModel{spinner: sp, list: l, tag: tag, textInput: ti}
+	return &SwitchingUIModel{spinner: sp, list: l, tag: tag, textInput: ti, title: title}
 }
 
 func (m *SwitchingUIModel) Init() tea.Cmd {
@@ -134,6 +135,7 @@ func (m *SwitchingUIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "esc":
 				m.renaming = false
 				m.textInput.Blur()
+				m.list.Title = m.title
 				return m, nil
 			}
 		case RenameResultMsg:
@@ -184,6 +186,7 @@ func (m *SwitchingUIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.textInput.Focus()
 				m.textInput.CursorEnd()
 				m.renaming = true
+				m.list.Title = "Rename Context"
 			}
 
 			return m, nil
