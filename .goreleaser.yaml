@@ -16,7 +16,7 @@ before:
 builds:
   - id: "kubesnap"
     main: ./cmd/
-    binary: ks
+    binary: kubesnap
     env:
       - CGO_ENABLED=0
     goos:

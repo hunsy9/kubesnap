@@ -13,21 +13,21 @@ func (HelpCmd) Run(stdout, _ io.Writer) error {
 
 func showHelp(stdout io.Writer) error {
 	help := `USAGE:
-  ks [SUBCOMMAND] | [OPTIONS]
+  kubesnap [SUBCOMMAND] | [OPTIONS]
 
 OPTIONS:
   -h, --help    Show this message
   -v, --version Show current version of kubesnap
 
 COMMANDS:
-  ks		Show current cluster/namespace overview
+  kubesnap		Show current cluster/namespace overview
   
-  ks ctx        Open context switcher
+  kubesnap ctx        Open context switcher
   └─'d' key     Switch to context delete mode   
   └─'r' key     Switch to context rename mode
 
-  ks ns         Open namespace switcher
-  ks ns ~       Switch to default namespace
+  kubesnap ns         Open namespace switcher
+  kubesnap ns ~       Switch to default namespace
 `
 	fmt.Fprint(stdout, help)
 	return nil

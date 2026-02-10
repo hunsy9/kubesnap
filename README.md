@@ -6,7 +6,7 @@
 <a href="https://github.com/hunsy9/kubesnap/releases/latest"><img src="https://img.shields.io/github/v/release/hunsy9/kubesnap?label=release" alt="Latest Release"></a>
 <a href="https://github.com/hunsy9/kubesnap/actions"><img src="https://github.com/hunsy9/kubesnap/actions/workflows/release.yml/badge.svg" alt="Build Status"></a>
 
-**kubesnap** (`ks`) is a TUI tool that provides an **instant cluster status overview** and **fast switching** between cluster contexts/namespaces, offering a streamlined way to manage your Kubernetes environment.
+**kubesnap** is a TUI tool that provides an **instant cluster status overview** and **fast switching** between cluster contexts/namespaces, offering a streamlined way to manage your Kubernetes environment.
 
 <img width="800" src="./assets/main.gif" alt="kubesnap demo"/>
 
@@ -15,7 +15,7 @@
 - **Cluster Dashboard**: Real-time overview of current connection and resource status (Nodes, Pods, Events).
 - **Context Switching**: Fast, fuzzy-searchable cluster context selector.
 - **Edit Contexts**: Rename or Delete contexts directly within the TUI.
-- **Namespace Switching**: Interactive namespace switcher with a `ks ns ~` shortcut for default namespace.
+- **Namespace Switching**: Interactive namespace switcher with a `kubesnap ns ~` shortcut for default namespace.
 
 ## Get Started
 
@@ -38,26 +38,42 @@ curl -sfL https://raw.githubusercontent.com/hunsy9/kubesnap/main/install.sh | sh
 
 ## Usage
 
-### View Cluster Status
+> **💡 Tip:** We recommend aliasing `kubesnap` to `ks` for speed.
+> Add this to your shell config (`.bashrc`, `.zshrc`, etc.):
+> ```bash
+> alias ks='kubesnap'
+> ```
 
-<img width="800" src="./assets/ks-cmd-demo.gif" alt="kubesnap demo"/>
+### 1. Cluster Overview
+View current cluster connection and health overview.
 
-- `ks`: View current cluster connection and health overview.
+<img width="800" src="./assets/ks-demo.gif" alt="overview demo"/>
 
-### Switch/Rename/Delete Contexts
+```bash
+kubesnap
+```
 
-<img width="800" src="./assets/ks-ctx-cmd-demo.gif" alt="kubesnap demo"/>
+### 2. Switch/Rename/Delete Context
+Open the interactive context switcher.
 
-- `ks ctx`: Open the context switcher.
-    - `'r' key`: Rename Selected Context
-    - `'d' key`: Move to Context Deletion Mode
+<img width="800" src="./assets/ks-ctx-cmd-demo.gif" alt="context switch demo"/>
 
-### Switch Namespace
+```bash
+kubesnap ctx
+```
+- **`Enter`**: Switch to the selected context.
+- **`r` key**: Rename the selected context.
+- **`d` key**: Move to context deletion mode.
 
-<img width="800" src="./assets/ks-ns-cmd-demo.gif" alt="kubesnap demo"/>
+### 3. Switch Namespace
 
-- `ks ns`: Open the namespace switcher.
-- `ks ns ~`: Quickly switch to the `default` namespace.
+<img width="800" src="./assets/ks-ns-cmd-demo.gif" alt="namespace switch demo"/>
+
+```bash
+kubesnap ns
+# or switch to default
+kubesnap ns ~
+```
 
 ### Key Bindings
 - `↑ / ↓`: Navigate list
@@ -70,7 +86,10 @@ curl -sfL https://raw.githubusercontent.com/hunsy9/kubesnap/main/install.sh | sh
 ## Maintenance
 
 ### Update
-Run the install script again or use `brew upgrade kubesnap`.
+Run the install script again or use the following commands:
+
+- **Homebrew**: `brew upgrade kubesnap`
+- **Scoop**: `scoop update kubesnap`
 
 ### Uninstallation
 ```bash

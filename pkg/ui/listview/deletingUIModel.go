@@ -3,7 +3,6 @@ package listview
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
@@ -11,40 +10,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	c "github.com/hunsy9/kubesnap/pkg/constant"
-	"k8s.io/client-go/tools/clientcmd"
 )
-
-func DeleteOperation(targets []string) tea.Cmd {
-	return func() tea.Msg {
-		config, err := clientcmd.LoadFromFile(clientcmd.RecommendedHomeFile)
-
-		if err != nil {
-			return DeletionResultMsg{Err: err, Targets: nil}
-		}
-
-		for _, targetCtx := range targets {
-			if _, exists := config.Contexts[targetCtx]; exists {
-				delete(config.Contexts, targetCtx)
-			}
-		}
-
-		err = clientcmd.WriteToFile(*config, clientcmd.RecommendedHomeFile)
-		if err != nil {
-			return DeletionResultMsg{Err: err, Targets: nil}
-		}
-
-		time.Sleep(time.Millisecond * 500)
-
-		return DeletionResultMsg{Err: nil, Targets: targets}
-	}
-}
-
-type DeletingOperation func(targets []string) tea.Cmd
-
-type DeletionResultMsg struct {
-	Err     error
-	Targets []string
-}
 
 type DeletingModel struct {
 	parent     tea.Model
