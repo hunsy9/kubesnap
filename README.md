@@ -47,10 +47,10 @@ curl -sfL https://raw.githubusercontent.com/hunsy9/kubesnap/main/install.sh | sh
 ### 1. Cluster Overview
 View current cluster connection and health overview.
 
-<img width="800" src="./assets/ks-demo.gif" alt="overview demo"/>
+<img width="800" src="./assets/ks-cmd-demo.gif" alt="overview demo"/>
 
 ```bash
-kubesnap
+$ kubesnap
 ```
 
 ### 2. Switch/Rename/Delete Context
@@ -59,20 +59,21 @@ Open the interactive context switcher and edit your context.
 <img width="800" src="./assets/ks-ctx-cmd-demo.gif" alt="context switch demo"/>
 
 ```bash
-kubesnap ctx
+$ kubesnap ctx
 ```
 - **`Enter`**: Switch to the selected context.
 - **`r` key**: Rename the selected context.
 - **`d` key**: Move to context deletion mode.
 
 ### 3. Switch Namespace
+Open the interactive namespace switcher
 
 <img width="800" src="./assets/ks-ns-cmd-demo.gif" alt="namespace switch demo"/>
 
 ```bash
-kubesnap ns
+$ kubesnap ns
 # or switch to default
-kubesnap ns ~
+$ kubesnap ns ~
 ```
 
 ### Key Bindings
