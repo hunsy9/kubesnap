@@ -80,4 +80,4 @@ brews:
     description: "Improved kubernetes context management tool"
     license: "MIT"
     install: |
-      bin.install "ks"
+      bin.install "kubesnap"
