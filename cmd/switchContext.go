@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
-	"time"
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
@@ -65,7 +63,7 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 	// create new bubbletea program with bunch of contexts
 
 	md := lv.NewSwitchingUIModel(items, c.DefaultSwitchingContextHeaderMessage, c.Context)
-	md.SetOperationFunc(SwitchContext)
+	md.SetOperationFunc(lv.SwitchContext)
 	p := tea.NewProgram(md, tea.WithAltScreen())
 
 	updatedModel, err := p.Run()
@@ -84,13 +82,4 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 	}
 
 	return nil
-}
-
-// TODO: modify kubeconfig file's current-context area instead of using kubectl
-func SwitchContext(contextName string) tea.Cmd {
-	return func() tea.Msg {
-		exec_err := exec.Command("kubectl", "config", "use-context", contextName).Run()
-		time.Sleep(time.Millisecond * 500)
-		return lv.OperationResultMsg{Err: exec_err}
-	}
 }

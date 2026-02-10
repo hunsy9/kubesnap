@@ -12,56 +12,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	c "github.com/hunsy9/kubesnap/pkg/constant"
-	"k8s.io/client-go/tools/clientcmd"
 )
-
-func (m *SwitchingUIModel) RenameOperation(newName string) tea.Cmd {
-	return func() tea.Msg {
-		if m.choice == newName {
-			return RenameResultMsg{Err: nil}
-		}
-
-		loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
-		config, err := loadingRules.Load()
-		if err != nil {
-			return RenameResultMsg{Err: err}
-		}
-
-		if _, exists := config.Contexts[newName]; exists {
-			return RenameResultMsg{Err: fmt.Errorf("context named '%s' already exists", newName)}
-		}
-
-		ctx, exists := config.Contexts[m.choice]
-		if !exists {
-			return RenameResultMsg{Err: fmt.Errorf("context '%s' not found", m.choice)}
-		}
-
-		config.Contexts[newName] = ctx
-		delete(config.Contexts, m.choice)
-
-		if config.CurrentContext == m.choice {
-			config.CurrentContext = newName
-		}
-
-		if err := clientcmd.ModifyConfig(loadingRules, *config, true); err != nil {
-			return RenameResultMsg{Err: err}
-		}
-
-		return RenameResultMsg{OriginalName: m.choice, NewName: newName, Err: nil}
-	}
-}
-
-type RenameResultMsg struct {
-	OriginalName string
-	NewName      string
-	Err          error
-}
-
-type OperationResultMsg struct {
-	Err error
-}
-
-type SwitchingOperation func(param string) tea.Cmd // switching function executed by UIModel
 
 type SwitchingUIModel struct {
 	spinner            spinner.Model // spinner model
@@ -116,10 +67,6 @@ func NewSwitchingUIModel(items []list.Item, title string, tag string) *Switching
 
 func (m *SwitchingUIModel) Init() tea.Cmd {
 	return nil
-}
-
-func (m *SwitchingUIModel) IsCustomKeyEnablementInValid() bool {
-	return m.tag == c.Namespace || m.list.FilterState() != list.Unfiltered || m.switching
 }
 
 func (m *SwitchingUIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -262,4 +209,8 @@ func (m *SwitchingUIModel) SetOperationFunc(operation SwitchingOperation) {
 
 func (m *SwitchingUIModel) GetOutput() string {
 	return m.output
+}
+
+func (m *SwitchingUIModel) IsCustomKeyEnablementInValid() bool {
+	return m.tag == c.Namespace || m.list.FilterState() != list.Unfiltered || m.switching
 }

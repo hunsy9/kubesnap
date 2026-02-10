@@ -73,7 +73,7 @@ func (_ SwitchNamespaceCmd) Run(stdout, _ io.Writer) error {
 	// create new bubbletea program with bunch of namespaces
 
 	md := lv.NewSwitchingUIModel(items, c.DefaultSwitchingNamespaceHeaderMessage, c.Namespace)
-	md.SetOperationFunc(SwitchNamespaceForTea)
+	md.SetOperationFunc(lv.SwitchNamespaceForTea)
 	p := tea.NewProgram(md, tea.WithAltScreen())
 
 	finalModel, err := p.Run()
@@ -136,12 +136,4 @@ func GetCurrentNamespace() string {
 	}
 
 	return c.DefaultNamespace
-}
-
-// TODO: modify kubeconfig file's current-context's namespace area instead of using kubectl
-func SwitchNamespaceForTea(namespaceName string) tea.Cmd {
-	return func() tea.Msg {
-		exec_err := exec.Command("kubectl", "config", "set-context", "--current", "--namespace="+namespaceName).Run()
-		return lv.OperationResultMsg{Err: exec_err}
-	}
 }
