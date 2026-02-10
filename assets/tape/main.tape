@@ -1,4 +1,4 @@
-Output main.gif
+Output ../main.gif
 
 Set Shell "bash"
 Set FontSize 16
@@ -6,15 +6,15 @@ Set Width 1200
 Set Height 450
 
 Sleep 1s
-Type "ks" 
-Sleep 1s
+Type "kubesnap" 
+Sleep 500ms
 Enter
-Sleep 2s
+Sleep 3s
 
 Ctrl+L
 Sleep 1s
 
-Type "ks ctx"
+Type "kubesnap ctx"
 Sleep 500ms
 Enter
 Sleep 1s
@@ -24,7 +24,7 @@ Sleep 500ms
 Down
 Sleep 1s
 Type "/"
-Sleep 1s
+Sleep 500ms
 Type "general"
 Enter
 Sleep 3s
@@ -32,7 +32,7 @@ Sleep 3s
 Ctrl+L
 Sleep 1s
 
-Type "ks ns"
+Type "kubesnap ns"
 Sleep 500ms
 Enter
 Sleep 2s
