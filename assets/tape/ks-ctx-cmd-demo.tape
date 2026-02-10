@@ -6,7 +6,7 @@ Set Width 1200
 Set Height 550
 
 Sleep 1s
-Type "ks ctx"
+Type "kubesnap ctx"
 Sleep 500ms
 Enter
 Sleep 1s
@@ -18,7 +18,7 @@ Sleep 500ms
 Enter
 Sleep 3s
 
-Type "ks ctx"
+Type "kubesnap ctx"
 Sleep 500ms
 Enter
 Sleep 500ms
@@ -32,7 +32,7 @@ Sleep 500ms
 Enter
 Sleep 1s
 
-Type "ks ctx"
+Type "kubesnap ctx"
 Sleep 500ms
 Enter
 Sleep 1s

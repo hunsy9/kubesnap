@@ -6,7 +6,7 @@ Set Width 1200
 Set Height 450
 
 Sleep 1s
-Type "ks ns"
+Type "kubesnap ns"
 Sleep 500ms
 Enter
 Sleep 2s
@@ -19,7 +19,7 @@ Sleep 500ms
 Enter
 Sleep 3s
 
-Type "ks ns ~"
+Type "kubesnap ns ~"
 Enter
 Sleep 3s
 

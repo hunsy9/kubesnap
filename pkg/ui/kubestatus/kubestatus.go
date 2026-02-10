@@ -195,7 +195,7 @@ func (m *StatusModel) View() string {
 	)
 
 	if m.latestVersion != "" {
-		updateMsg := updageMsgStyle.Render(fmt.Sprintf("⚡ New update available! version %s -> %s", version.Version, m.latestVersion))
+		updateMsg := updageMsgStyle.Render(fmt.Sprintf("⚡ New update available! version %s -> %s\n👉 Check update guide: %s", version.Version, m.latestVersion, updateUrlStyle.Render(c.MaintenanceGuideURL)))
 		layout = lipgloss.JoinVertical(
 			lipgloss.Left,
 			updateMsg,
