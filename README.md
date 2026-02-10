@@ -5,6 +5,7 @@
 <a href="https://pkg.go.dev/github.com/hunsy9/kubesnap"><img src="https://pkg.go.dev/badge/github.com/hunsy9/kubesnap.svg" alt="Go Reference"></a>
 <a href="https://github.com/hunsy9/kubesnap/releases/latest"><img src="https://img.shields.io/github/v/release/hunsy9/kubesnap?label=release" alt="Latest Release"></a>
 <a href="https://github.com/hunsy9/kubesnap/actions"><img src="https://github.com/hunsy9/kubesnap/actions/workflows/release.yml/badge.svg" alt="Build Status"></a>
+<a href="https://github.com/hunsy9/kubesnap/blob/main/LICENSE"><img src="https://img.shields.io/github/license/hunsy9/kubesnap" alt="License"></a>
 
 **kubesnap** is a TUI tool that provides an **instant cluster status overview** and **fast switching** between cluster contexts/namespaces, offering a streamlined way to manage your Kubernetes environment.
 
