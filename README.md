@@ -54,7 +54,7 @@ kubesnap
 ```
 
 ### 2. Switch/Rename/Delete Context
-Open the interactive context switcher.
+Open the interactive context switcher and edit your context.
 
 <img width="800" src="./assets/ks-ctx-cmd-demo.gif" alt="context switch demo"/>
 
