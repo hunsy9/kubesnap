@@ -25,6 +25,7 @@ const (
 	DefaultActiveColor    string = "#00d919"
 	DefaultWarningColor   string = "#f1c40f"
 	DefaultUrlColor       string = "#626262"
+	DefaultUpdateUrlColor string = "#58A6FF"
 	DefaultErrorColor     string = "#d90808"
 	DefaultUpdateMsgColor string = "#e9ad55"
 
@@ -35,4 +36,7 @@ const (
 
 	// Github Release API URL
 	GithubReleaseURL string = "https://api.github.com/repos/hunsy9/kubesnap/releases/latest"
+
+	// Maintenance Guide URL
+	MaintenanceGuideURL string = "https://github.com/hunsy9/kubesnap#maintenance"
 )

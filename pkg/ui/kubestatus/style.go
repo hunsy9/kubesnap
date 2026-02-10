@@ -10,6 +10,7 @@ var (
 	boxStyle       = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color(c.DefaultThemeColor)).Padding(0, 2).Margin(0, 0, 1, 0)
 	headerStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultThemeColor)).Bold(true).Italic(true)
 	urlStyle       = lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultUrlColor))
+	updateUrlStyle = lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultUpdateUrlColor)).Underline(true)
 	activeStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultActiveColor))
 	warningStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultWarningColor))
 	errorStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultErrorColor))
