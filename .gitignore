@@ -35,4 +35,4 @@ go.work.sum
 dist/
 
 # kubesnap executable binary
-ks
+kubesnap
