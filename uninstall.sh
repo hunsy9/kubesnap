@@ -2,7 +2,7 @@
 set -e
 
 # Configuration
-BINARY="ks"
+BINARY="kubesnap"
 INSTALL_DIR="/usr/local/bin"
 CONFIG_DIR="$HOME/.kubesnap"
 

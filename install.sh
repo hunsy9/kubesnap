@@ -4,7 +4,7 @@ set -e
 # Configuration
 OWNER="hunsy9"
 REPO="kubesnap"
-BINARY="ks"
+BINARY="kubesnap"
 INSTALL_DIR="/usr/local/bin"
 
 # Colors
