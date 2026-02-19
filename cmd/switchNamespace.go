@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 
 	"github.com/pkg/errors"
 
@@ -73,7 +72,7 @@ func (_ SwitchNamespaceCmd) Run(stdout, _ io.Writer) error {
 	// create new bubbletea program with bunch of namespaces
 
 	md := lv.NewSwitchingUIModel(items, c.DefaultSwitchingNamespaceHeaderMessage, c.Namespace)
-	md.SetOperationFunc(lv.SwitchNamespaceForTea)
+	md.SetOperationFunc(lv.SwitchNamespaceOperation)
 	p := tea.NewProgram(md, tea.WithAltScreen())
 
 	finalModel, err := p.Run()
@@ -98,10 +97,28 @@ func (_ SwitchToDefaultNamespaceCmd) Run(stdout, _ io.Writer) error {
 		return errors.New("You are already in the default namespace")
 	}
 
-	// TODO: modify kubeconfig file's current-context's namespace area instead of using kubectl
-	exec_err := exec.Command("kubectl", "config", "set-context", "--current", "--namespace="+c.DefaultNamespace).Run()
-	if exec_err != nil {
-		return errors.Wrap(exec_err, "Failed to switch namespace to default")
+	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+	config, err := loadingRules.Load()
+
+	if err != nil {
+		return err
+	}
+
+	ctxName := config.CurrentContext
+	if ctxName == "" {
+		return fmt.Errorf("no current context set")
+	}
+
+	ctx, exists := config.Contexts[ctxName]
+	if !exists {
+		return fmt.Errorf("context '%s' not found", ctxName)
+	}
+
+	ctx.Namespace = "default"
+
+	err = clientcmd.ModifyConfig(loadingRules, *config, true)
+	if err != nil {
+		return errors.Wrap(err, "Failed to switch namespace to default")
 	}
 
 	fmt.Println("Namespace switched to default")

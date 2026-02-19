@@ -22,8 +22,12 @@
 
 ### Homebrew (macOS & Linux)
 ```bash
-brew tap hunsy9/kubesnap
-brew install kubesnap
+brew install hunsy9/kubesnap/kubesnap
+```
+
+### Shell Script (Unix-like)
+```bash
+curl -sfL https://raw.githubusercontent.com/hunsy9/kubesnap/main/install.sh | sh
 ```
 
 ### Scoop (Windows)
@@ -32,14 +36,10 @@ scoop bucket add hunsy9 https://github.com/hunsy9/scoop-bucket
 scoop install kubesnap
 ```
 
-### Shell Script (Unix-like)
-```bash
-curl -sfL https://raw.githubusercontent.com/hunsy9/kubesnap/main/install.sh | sh
-```
-
 ## Usage
 
 > **💡 Tip:** We recommend aliasing `kubesnap` to `ks` for speed.
+>
 > Add this to your shell config (`.bashrc`, `.zshrc`, etc.):
 > ```bash
 > alias ks='kubesnap'
@@ -98,11 +98,11 @@ Run the install script again or use the following commands:
 # Via Homebrew
 brew uninstall kubesnap
 
-# Via Scoop
-scoop uninstall kubesnap
-
 # Via Script
 curl -sfL https://raw.githubusercontent.com/hunsy9/kubesnap/main/uninstall.sh | sh
+
+# Via Scoop
+scoop uninstall kubesnap
 ```
 
 ---

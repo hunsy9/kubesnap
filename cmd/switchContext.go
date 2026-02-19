@@ -63,7 +63,7 @@ func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 	// create new bubbletea program with bunch of contexts
 
 	md := lv.NewSwitchingUIModel(items, c.DefaultSwitchingContextHeaderMessage, c.Context)
-	md.SetOperationFunc(lv.SwitchContext)
+	md.SetOperationFunc(lv.SwitchContextOperation)
 	p := tea.NewProgram(md, tea.WithAltScreen())
 
 	updatedModel, err := p.Run()

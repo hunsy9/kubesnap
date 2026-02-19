@@ -2,7 +2,6 @@ package listview
 
 import (
 	"fmt"
-	"os/exec"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -11,28 +10,68 @@ import (
 
 type SwitchingOperation func(param string) tea.Cmd // switching function executed by UIModel
 
-// TODO: modify kubeconfig file's current-context area instead of using kubectl
-func SwitchContext(contextName string) tea.Cmd {
-	return func() tea.Msg {
-		exec_err := exec.Command("kubectl", "config", "use-context", contextName).Run()
-		time.Sleep(time.Millisecond * 500)
-		return OperationResultMsg{Err: exec_err}
-	}
-}
-
-// TODO: modify kubeconfig file's current-context's namespace area instead of using kubectl
-func SwitchNamespaceForTea(namespaceName string) tea.Cmd {
-	return func() tea.Msg {
-		exec_err := exec.Command("kubectl", "config", "set-context", "--current", "--namespace="+namespaceName).Run()
-		return OperationResultMsg{Err: exec_err}
-	}
-}
-
 type DeletingOperation func(targets []string) tea.Cmd
+
+func SwitchContextOperation(contextName string) tea.Cmd {
+	return func() tea.Msg {
+		loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+		config, err := loadingRules.Load()
+
+		if err != nil {
+			return SwitchResultMsg{Err: err}
+		}
+
+		if _, exists := config.Contexts[contextName]; !exists {
+			return SwitchResultMsg{Err: fmt.Errorf("context '%s' not found", contextName)}
+		}
+
+		config.CurrentContext = contextName
+
+		err = clientcmd.ModifyConfig(loadingRules, *config, true)
+		if err != nil {
+			return SwitchResultMsg{Err: err}
+		}
+
+		time.Sleep(time.Millisecond * 400)
+		return SwitchResultMsg{Err: nil}
+	}
+}
+
+func SwitchNamespaceOperation(namespaceName string) tea.Cmd {
+	return func() tea.Msg {
+		loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+		config, err := loadingRules.Load()
+
+		if err != nil {
+			return SwitchResultMsg{Err: err}
+		}
+
+		ctxName := config.CurrentContext
+		if ctxName == "" {
+			return SwitchResultMsg{Err: fmt.Errorf("no current context set")}
+		}
+
+		ctx, exists := config.Contexts[ctxName]
+		if !exists {
+			return SwitchResultMsg{Err: fmt.Errorf("context '%s' not found", ctxName)}
+		}
+
+		ctx.Namespace = namespaceName
+
+		err = clientcmd.ModifyConfig(loadingRules, *config, true)
+		if err != nil {
+			return SwitchResultMsg{Err: err}
+		}
+
+		time.Sleep(time.Millisecond * 300)
+		return SwitchResultMsg{Err: nil}
+	}
+}
 
 func DeleteOperation(targets []string) tea.Cmd {
 	return func() tea.Msg {
-		config, err := clientcmd.LoadFromFile(clientcmd.RecommendedHomeFile)
+		loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+		config, err := loadingRules.Load()
 
 		if err != nil {
 			return DeletionResultMsg{Err: err, Targets: nil}
@@ -44,12 +83,12 @@ func DeleteOperation(targets []string) tea.Cmd {
 			}
 		}
 
-		err = clientcmd.WriteToFile(*config, clientcmd.RecommendedHomeFile)
+		err = clientcmd.ModifyConfig(loadingRules, *config, true)
 		if err != nil {
 			return DeletionResultMsg{Err: err, Targets: nil}
 		}
 
-		time.Sleep(time.Millisecond * 500)
+		time.Sleep(time.Millisecond * 400)
 
 		return DeletionResultMsg{Err: nil, Targets: targets}
 	}
