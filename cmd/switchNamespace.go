@@ -73,7 +73,7 @@ func (_ SwitchNamespaceCmd) Run(stdout, _ io.Writer) error {
 	// create new bubbletea program with bunch of namespaces
 
 	md := lv.NewSwitchingUIModel(items, c.DefaultSwitchingNamespaceHeaderMessage, c.Namespace)
-	md.SetOperationFunc(lv.SwitchNamespaceForTea)
+	md.SetOperationFunc(lv.SwitchNamespaceOperation)
 	p := tea.NewProgram(md, tea.WithAltScreen())
 
 	finalModel, err := p.Run()

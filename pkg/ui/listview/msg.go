@@ -1,6 +1,6 @@
 package listview
 
-type OperationResultMsg struct {
+type SwitchResultMsg struct {
 	Err error
 }
 

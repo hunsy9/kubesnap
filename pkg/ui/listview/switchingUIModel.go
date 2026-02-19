@@ -138,7 +138,7 @@ func (m *SwitchingUIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, nil
 		}
-	case OperationResultMsg:
+	case SwitchResultMsg:
 		m.switching = false
 		if msg.Err != nil {
 			fmt.Fprintf(os.Stderr, "Error switching %s: %v\n", m.tag, msg.Err)

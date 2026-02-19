@@ -11,24 +11,24 @@ import (
 
 type SwitchingOperation func(param string) tea.Cmd // switching function executed by UIModel
 
+type DeletingOperation func(targets []string) tea.Cmd
+
 // TODO: modify kubeconfig file's current-context area instead of using kubectl
-func SwitchContext(contextName string) tea.Cmd {
+func SwitchContextOperation(contextName string) tea.Cmd {
 	return func() tea.Msg {
 		exec_err := exec.Command("kubectl", "config", "use-context", contextName).Run()
 		time.Sleep(time.Millisecond * 500)
-		return OperationResultMsg{Err: exec_err}
+		return SwitchResultMsg{Err: exec_err}
 	}
 }
 
 // TODO: modify kubeconfig file's current-context's namespace area instead of using kubectl
-func SwitchNamespaceForTea(namespaceName string) tea.Cmd {
+func SwitchNamespaceOperation(namespaceName string) tea.Cmd {
 	return func() tea.Msg {
 		exec_err := exec.Command("kubectl", "config", "set-context", "--current", "--namespace="+namespaceName).Run()
-		return OperationResultMsg{Err: exec_err}
+		return SwitchResultMsg{Err: exec_err}
 	}
 }
-
-type DeletingOperation func(targets []string) tea.Cmd
 
 func DeleteOperation(targets []string) tea.Cmd {
 	return func() tea.Msg {
