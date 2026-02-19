@@ -39,6 +39,7 @@ scoop install kubesnap
 ## Usage
 
 > **💡 Tip:** We recommend aliasing `kubesnap` to `ks` for speed.
+>
 > Add this to your shell config (`.bashrc`, `.zshrc`, etc.):
 > ```bash
 > alias ks='kubesnap'
