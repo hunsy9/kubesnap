@@ -27,7 +27,7 @@ func (d ItemDelegate) Render(w io.Writer, m list.Model, index int, listItem list
 		return
 	}
 
-	str := fmt.Sprintf("%s", i.DisplayName)
+	str := i.DisplayName
 
 	fn := itemStyle.Render
 	if index == m.Index() {
