@@ -8,12 +8,11 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	c "github.com/hunsy9/kubesnap/pkg/constant"
 	"github.com/hunsy9/kubesnap/pkg/version"
-	"k8s.io/client-go/kubernetes"
 )
 
 type StatusModel struct {
 	spinner         spinner.Model
-	clientSet       *kubernetes.Clientset
+	clientSet       KubernetesClient
 	clusterName     string
 	namespace       string
 	endpoint        string
@@ -33,7 +32,7 @@ type StatusModel struct {
 	latestVersion   string
 }
 
-func NewStatusModel(clientSet *kubernetes.Clientset, clusterName string, namespace string, endpoint string) *StatusModel {
+func NewStatusModel(clientSet KubernetesClient, clusterName string, namespace string, endpoint string) *StatusModel {
 	sp := spinner.New()
 	sp.Spinner = spinner.Dot
 	sp.Style = spinnerStyle
