@@ -9,55 +9,49 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	c "github.com/hunsy9/kubesnap/pkg/constant"
-	"github.com/hunsy9/kubesnap/pkg/envutil"
 	lv "github.com/hunsy9/kubesnap/pkg/ui/listview"
-	"github.com/hunsy9/kubesnap/pkg/yamlutil"
 	"github.com/pkg/errors"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 type SwitchContextCmd struct{}
 
 func (_ SwitchContextCmd) Run(stdout, _ io.Writer) error {
 
-	// get kubeconfig path
-
-	kubeConfigPath := os.Getenv("HOME") + c.DefaultKubeConfigLocation
-	filepath := envutil.GetEnvOrDefault("KUBECONFIG", kubeConfigPath)
-
-	// transform kubeconfig file to Kubeconfig model
-	// TODO: use client-go functions instead of using yamlutil
-
-	var unMarshalTarget yamlutil.KubeConfig
-
-	yamlContext := yamlutil.NewParsingContext(filepath, &unMarshalTarget)
-	err := yamlutil.ParseYaml(yamlContext)
+	// load kubeconfig using client-go
+	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+	config, err := loadingRules.Load()
 	if err != nil {
-		return errors.Wrap(err, "failed to parse yaml")
+		return errors.Wrap(err, "failed to load kubeconfig")
 	}
 
-	if len(unMarshalTarget.Contexts) == 0 {
+	if len(config.Contexts) == 0 {
 		return errors.New("no contexts found")
 	}
 
-	// if there is contexts in kubeconfig file, push it to switchinglistmodel's Item list first
-
+	// build list items from contexts
 	items := []list.Item{}
 	currentContextMarker := lipgloss.NewStyle().Foreground(lipgloss.Color(c.DefaultActiveColor)).Bold(true).Render(c.CurrentContextMarker)
-	currentContextItem := lv.Item{
-		DisplayName: unMarshalTarget.CurrentContext + currentContextMarker,
-		Name:        unMarshalTarget.CurrentContext,
-	}
-	items = append(items, currentContextItem) // push current context first
 
-	for _, ctx := range unMarshalTarget.Contexts {
-		if unMarshalTarget.CurrentContext == ctx.Name {
+	// add current context first
+	if config.CurrentContext != "" {
+		currentContextItem := lv.Item{
+			DisplayName: config.CurrentContext + currentContextMarker,
+			Name:        config.CurrentContext,
+		}
+		items = append(items, currentContextItem)
+	}
+
+	// add other contexts
+	for ctxName := range config.Contexts {
+		if ctxName == config.CurrentContext {
 			continue
 		}
 		contextItem := lv.Item{
-			DisplayName: ctx.Name,
-			Name:        ctx.Name,
+			DisplayName: ctxName,
+			Name:        ctxName,
 		}
-		items = append(items, lv.Item(contextItem))
+		items = append(items, contextItem)
 	}
 
 	// create new bubbletea program with bunch of contexts
