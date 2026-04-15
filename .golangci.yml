@@ -1,17 +1,29 @@
+version: "2"
+
 run:
   timeout: 5m
 
 linters:
   enable:
     - errcheck
-    - gosimple
     - govet
     - ineffassign
     - staticcheck
     - unused
-
-linters-settings:
-  staticcheck:
-    checks:
-      - all
-      - -SA1019  # ignore deprecation warnings
+  settings:
+    staticcheck:
+      checks:
+        - all
+        - -SA1019  # ignore deprecation warnings
+        - -ST1000  # package comments
+        - -ST1003  # naming convention (URL vs Url)
+        - -ST1006  # receiver name underscore
+        - -ST1020  # comment format
+    errcheck:
+      exclude-functions:
+        - fmt.Fprint
+        - fmt.Fprintf
+        - (io.Closer).Close
+        - os.Remove
+        - os.Setenv
+        - os.Unsetenv
