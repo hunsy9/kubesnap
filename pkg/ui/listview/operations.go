@@ -78,9 +78,7 @@ func DeleteOperation(targets []string) tea.Cmd {
 		}
 
 		for _, targetCtx := range targets {
-			if _, exists := config.Contexts[targetCtx]; exists {
-				delete(config.Contexts, targetCtx)
-			}
+			delete(config.Contexts, targetCtx)
 		}
 
 		err = clientcmd.ModifyConfig(loadingRules, *config, true)

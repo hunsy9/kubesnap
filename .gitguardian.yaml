@@ -1,0 +1,6 @@
+version: 2
+
+secret:
+  ignored_paths:
+    - "test/fixtures/**"
+    - "**/testdata/**"

@@ -39,11 +39,7 @@ func (c *VersionCheckingCache) validateField() bool {
 	}
 
 	_, err := time.Parse(time.RFC3339, c.LastCheckedTime)
-	if err != nil {
-		return false
-	}
-
-	return true
+	return err == nil
 }
 
 func LoadCache() VersionCheckingCache {
@@ -59,7 +55,7 @@ func LoadCache() VersionCheckingCache {
 
 	data, err := os.ReadFile(cachePath)
 	if os.IsNotExist(err) {
-		os.MkdirAll(configDir, 0755)
+		_ = os.MkdirAll(configDir, 0755)
 		return emptyCache
 	} else if err != nil {
 		return emptyCache

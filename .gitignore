@@ -36,3 +36,7 @@ dist/
 
 # kubesnap executable binary
 kubesnap
+
+# Claude Code
+.claude/
+CLAUDE.md
